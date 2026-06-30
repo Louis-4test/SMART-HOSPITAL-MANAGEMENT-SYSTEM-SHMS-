@@ -1,0 +1,907 @@
+{
+  "info": {
+    "_postman_id": "5e32fd9c-0783-4d7c-9a67-fde3f63938cc",
+    "name": "Smart Hospital Management System API",
+    "description": "Postman collection for all Spring Boot REST APIs in the Smart Hospital Management System. Uses HTTP Basic auth with collection variables. Default credentials are admin/admin123; change username/password to doctor/doctor123, nurse/nurse123, or receptionist/reception123 when testing role-specific access.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{username}}",
+        "type": "string"
+      },
+      {
+        "key": "password",
+        "value": "{{password}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.test(\"Response is not a server error\", function () {",
+          "  pm.expect(pm.response.code).to.be.below(500);",
+          "});"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "username",
+      "value": "admin"
+    },
+    {
+      "key": "password",
+      "value": "admin123"
+    },
+    {
+      "key": "patientId",
+      "value": "1"
+    },
+    {
+      "key": "doctorId",
+      "value": "1"
+    },
+    {
+      "key": "nurseId",
+      "value": "1"
+    },
+    {
+      "key": "departmentId",
+      "value": "1"
+    },
+    {
+      "key": "appointmentId",
+      "value": "1"
+    },
+    {
+      "key": "prescriptionId",
+      "value": "1"
+    },
+    {
+      "key": "labTestId",
+      "value": "1"
+    },
+    {
+      "key": "invoiceId",
+      "value": "1"
+    },
+    {
+      "key": "specialization",
+      "value": "Cardiology"
+    }
+  ],
+  "item": [
+    {
+      "name": "Patients",
+      "item": [
+        {
+          "name": "Create Patient",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"phone\": \"+237612345678\",\n  \"dateOfBirth\": \"1990-04-15\",\n  \"gender\": \"Male\",\n  \"bloodType\": \"O+\",\n  \"nationalId\": \"NAT-001\",\n  \"patientStatus\": \"ADMITTED\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/patients",
+            "description": "Roles: ADMIN, RECEPTIONIST."
+          }
+        },
+        {
+          "name": "List Patients",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/patients",
+            "description": "Roles: ADMIN, DOCTOR, NURSE, RECEPTIONIST."
+          }
+        },
+        {
+          "name": "List Patients Paged",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients/paged?page=0&size=10&sort=lastName,asc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patients",
+                "paged"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                },
+                {
+                  "key": "sort",
+                  "value": "lastName,asc"
+                }
+              ]
+            },
+            "description": "Roles: ADMIN, DOCTOR, NURSE, RECEPTIONIST."
+          }
+        },
+        {
+          "name": "Get Patient By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/patients/{{patientId}}",
+            "description": "Roles: ADMIN, DOCTOR, NURSE, RECEPTIONIST."
+          }
+        },
+        {
+          "name": "Update Patient",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john.updated@example.com\",\n  \"phone\": \"+237612345679\",\n  \"dateOfBirth\": \"1990-04-15\",\n  \"gender\": \"Male\",\n  \"bloodType\": \"O+\",\n  \"nationalId\": \"NAT-001\",\n  \"patientStatus\": \"OUTPATIENT\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/patients/{{patientId}}",
+            "description": "Roles: ADMIN, RECEPTIONIST."
+          }
+        },
+        {
+          "name": "Patch Patient",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"+237699999999\",\n  \"patientStatus\": \"DISCHARGED\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/patients/{{patientId}}",
+            "description": "Roles: ADMIN, RECEPTIONIST."
+          }
+        },
+        {
+          "name": "Delete Patient",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/patients/{{patientId}}",
+            "description": "Role: ADMIN."
+          }
+        },
+        {
+          "name": "Search Patients By Name",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patients/search?name=John",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "patients",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "John"
+                },
+                {
+                  "key": "email",
+                  "value": "john.doe@example.com",
+                  "disabled": true
+                },
+                {
+                  "key": "phone",
+                  "value": "+237612345678",
+                  "disabled": true
+                },
+                {
+                  "key": "id",
+                  "value": "{{patientId}}",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Roles: ADMIN, DOCTOR, NURSE, RECEPTIONIST. Enable alternate query parameters to search by id, email, phone, or name+phone."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Doctors",
+      "item": [
+        {
+          "name": "Create Doctor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Alice\",\n  \"lastName\": \"Ngono\",\n  \"email\": \"alice.ngono@example.com\",\n  \"phone\": \"+237612300001\",\n  \"licenseNumber\": \"DOC-001\",\n  \"specialization\": \"Cardiology\",\n  \"yearsOfExperience\": 12,\n  \"departmentId\": 1\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/doctors",
+            "description": "Role: ADMIN."
+          }
+        },
+        {
+          "name": "List Doctors",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/doctors",
+            "description": "Roles: ADMIN, DOCTOR, NURSE, RECEPTIONIST."
+          }
+        },
+        {
+          "name": "List Doctors Paged",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/doctors/paged?page=0&size=10&sort=lastName,asc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "doctors",
+                "paged"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                },
+                {
+                  "key": "sort",
+                  "value": "lastName,asc"
+                }
+              ]
+            },
+            "description": "Roles: ADMIN, DOCTOR, NURSE, RECEPTIONIST."
+          }
+        },
+        {
+          "name": "Get Doctor By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/doctors/{{doctorId}}",
+            "description": "Roles: ADMIN, DOCTOR, NURSE, RECEPTIONIST."
+          }
+        },
+        {
+          "name": "Update Doctor",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Alice\",\n  \"lastName\": \"Ngono\",\n  \"email\": \"alice.ngono@example.com\",\n  \"phone\": \"+237612300002\",\n  \"licenseNumber\": \"DOC-001\",\n  \"specialization\": \"Cardiology\",\n  \"yearsOfExperience\": 13,\n  \"departmentId\": 1\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/doctors/{{doctorId}}",
+            "description": "Role: ADMIN."
+          }
+        },
+        {
+          "name": "Patch Doctor",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"+237688888888\",\n  \"yearsOfExperience\": 14\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/doctors/{{doctorId}}",
+            "description": "Role: ADMIN."
+          }
+        },
+        {
+          "name": "Delete Doctor",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/doctors/{{doctorId}}",
+            "description": "Role: ADMIN."
+          }
+        },
+        {
+          "name": "Find Doctors By Specialization",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/doctors/specialization/{{specialization}}",
+            "description": "Roles: ADMIN, DOCTOR, NURSE, RECEPTIONIST."
+          }
+        },
+        {
+          "name": "Get Busiest Doctors",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/doctors/busiest",
+            "description": "Roles: ADMIN, DOCTOR, NURSE, RECEPTIONIST."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Appointments",
+      "item": [
+        {
+          "name": "Create Appointment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"appointmentDate\": \"2027-01-20T10:30:00\",\n  \"status\": \"SCHEDULED\",\n  \"reason\": \"Routine checkup\",\n  \"notes\": \"First visit\",\n  \"patientId\": 1,\n  \"doctorId\": 1\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/appointments",
+            "description": "Roles: ADMIN, RECEPTIONIST."
+          }
+        },
+        {
+          "name": "List Appointments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/appointments",
+            "description": "Roles: ADMIN, DOCTOR, NURSE, RECEPTIONIST."
+          }
+        },
+        {
+          "name": "List Appointments Paged",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/appointments/paged?page=0&size=10&sort=appointmentDate,asc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "appointments",
+                "paged"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                },
+                {
+                  "key": "sort",
+                  "value": "appointmentDate,asc"
+                }
+              ]
+            },
+            "description": "Roles: ADMIN, DOCTOR, NURSE, RECEPTIONIST."
+          }
+        },
+        {
+          "name": "Get Appointment By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/appointments/{{appointmentId}}",
+            "description": "Roles: ADMIN, DOCTOR, NURSE, RECEPTIONIST."
+          }
+        },
+        {
+          "name": "Update Appointment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"appointmentDate\": \"2027-01-21T09:00:00\",\n  \"status\": \"RESCHEDULED\",\n  \"reason\": \"Follow-up consultation\",\n  \"notes\": \"Bring lab results\",\n  \"patientId\": 1,\n  \"doctorId\": 1\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/appointments/{{appointmentId}}",
+            "description": "Roles: ADMIN, RECEPTIONIST."
+          }
+        },
+        {
+          "name": "Cancel Appointment",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/appointments/{{appointmentId}}/cancel",
+            "description": "Roles: ADMIN, RECEPTIONIST."
+          }
+        },
+        {
+          "name": "Undo Last Appointment Cancellation",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/appointments/undo-cancel",
+            "description": "Role: ADMIN."
+          }
+        },
+        {
+          "name": "Delete Appointment",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/appointments/{{appointmentId}}",
+            "description": "Role: ADMIN. Controller delegates to cancelAppointment."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Departments",
+      "item": [
+        {
+          "name": "Create Department",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Cardiology\",\n  \"description\": \"Heart and vascular care\",\n  \"location\": \"Building A - Floor 2\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/departments",
+            "description": "Role: ADMIN."
+          }
+        },
+        {
+          "name": "List Departments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/departments",
+            "description": "Roles: ADMIN, DOCTOR, NURSE, RECEPTIONIST."
+          }
+        },
+        {
+          "name": "Get Department By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/departments/{{departmentId}}",
+            "description": "Roles: ADMIN, DOCTOR, NURSE, RECEPTIONIST."
+          }
+        },
+        {
+          "name": "Update Department",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Cardiology\",\n  \"description\": \"Cardiac diagnostics and treatment\",\n  \"location\": \"Building A - Floor 3\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/departments/{{departmentId}}",
+            "description": "Role: ADMIN."
+          }
+        },
+        {
+          "name": "Delete Department",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/departments/{{departmentId}}",
+            "description": "Role: ADMIN."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Nurses",
+      "item": [
+        {
+          "name": "Create Nurse",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Mary\",\n  \"lastName\": \"Biya\",\n  \"email\": \"mary.biya@example.com\",\n  \"phone\": \"+237612300010\",\n  \"licenseNumber\": \"NUR-001\",\n  \"shift\": \"DAY\",\n  \"department\": \"Cardiology\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/nurses",
+            "description": "Role: ADMIN."
+          }
+        },
+        {
+          "name": "List Nurses",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/nurses",
+            "description": "Roles: ADMIN, DOCTOR, NURSE."
+          }
+        },
+        {
+          "name": "Get Nurse By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/nurses/{{nurseId}}",
+            "description": "Roles: ADMIN, DOCTOR, NURSE."
+          }
+        },
+        {
+          "name": "Update Nurse",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Mary\",\n  \"lastName\": \"Biya\",\n  \"email\": \"mary.biya@example.com\",\n  \"phone\": \"+237612300011\",\n  \"licenseNumber\": \"NUR-001\",\n  \"shift\": \"NIGHT\",\n  \"department\": \"Emergency\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/nurses/{{nurseId}}",
+            "description": "Role: ADMIN."
+          }
+        },
+        {
+          "name": "Delete Nurse",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/nurses/{{nurseId}}",
+            "description": "Role: ADMIN."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Prescriptions",
+      "item": [
+        {
+          "name": "Create Prescription",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"medicationName\": \"Amoxicillin\",\n  \"dosage\": \"500mg\",\n  \"frequency\": \"Twice daily\",\n  \"duration\": \"7 days\",\n  \"issueDate\": \"2026-06-30\",\n  \"patientId\": 1\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/prescriptions",
+            "description": "Roles: ADMIN, DOCTOR."
+          }
+        },
+        {
+          "name": "List Prescriptions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/prescriptions",
+            "description": "Roles: ADMIN, DOCTOR."
+          }
+        },
+        {
+          "name": "Get Prescription By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/prescriptions/{{prescriptionId}}",
+            "description": "Roles: ADMIN, DOCTOR."
+          }
+        },
+        {
+          "name": "List Prescriptions By Patient",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/prescriptions/patient/{{patientId}}",
+            "description": "Roles: ADMIN, DOCTOR."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Laboratory Tests",
+      "item": [
+        {
+          "name": "Request Lab Test",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"testName\": \"Complete Blood Count\",\n  \"testDate\": \"2026-07-01T08:30:00\",\n  \"result\": null,\n  \"status\": \"REQUESTED\",\n  \"requestedByDoctor\": \"Dr. Alice Ngono\"\n}"
+            },
+            "url": "{{baseUrl}}/api/v1/lab-tests",
+            "description": "Roles: ADMIN, DOCTOR, NURSE."
+          }
+        },
+        {
+          "name": "List Lab Tests",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/lab-tests",
+            "description": "Roles: ADMIN, DOCTOR, NURSE."
+          }
+        },
+        {
+          "name": "Get Lab Test By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/lab-tests/{{labTestId}}",
+            "description": "Roles: ADMIN, DOCTOR, NURSE."
+          }
+        },
+        {
+          "name": "Update Lab Test Result",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/lab-tests/{{labTestId}}/result?result=Normal",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "lab-tests",
+                "{{labTestId}}",
+                "result"
+              ],
+              "query": [
+                {
+                  "key": "result",
+                  "value": "Normal"
+                }
+              ]
+            },
+            "description": "Roles: ADMIN, DOCTOR, NURSE."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Billing",
+      "item": [
+        {
+          "name": "Generate Invoice",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/billing/invoices/generate/{{appointmentId}}",
+            "description": "Roles: ADMIN, DOCTOR."
+          }
+        },
+        {
+          "name": "Get Invoice By ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/billing/invoices/{{invoiceId}}",
+            "description": "Roles: ADMIN, DOCTOR."
+          }
+        },
+        {
+          "name": "Pay Invoice",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/billing/invoices/{{invoiceId}}/pay?method=CARD",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "billing",
+                "invoices",
+                "{{invoiceId}}",
+                "pay"
+              ],
+              "query": [
+                {
+                  "key": "method",
+                  "value": "CARD"
+                }
+              ]
+            },
+            "description": "Roles: ADMIN, DOCTOR."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reports",
+      "item": [
+        {
+          "name": "Total Patients",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/reports/total-patients",
+            "description": "Roles: ADMIN, DOCTOR."
+          }
+        },
+        {
+          "name": "Patients Per Department",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/reports/patients-per-department",
+            "description": "Roles: ADMIN, DOCTOR."
+          }
+        },
+        {
+          "name": "Admitted Today",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/reports/admitted-today",
+            "description": "Roles: ADMIN, DOCTOR."
+          }
+        },
+        {
+          "name": "Doctor Workload",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/reports/doctor-workload",
+            "description": "Roles: ADMIN, DOCTOR."
+          }
+        },
+        {
+          "name": "Common Diseases",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/reports/common-diseases",
+            "description": "Roles: ADMIN, DOCTOR."
+          }
+        },
+        {
+          "name": "Lab Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/reports/lab-statistics",
+            "description": "Roles: ADMIN, DOCTOR."
+          }
+        },
+        {
+          "name": "Revenue By Department",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/reports/revenue-by-department",
+            "description": "Roles: ADMIN, DOCTOR."
+          }
+        },
+        {
+          "name": "Monthly Revenue",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/reports/monthly-revenue",
+            "description": "Roles: ADMIN, DOCTOR."
+          }
+        },
+        {
+          "name": "Age Distribution",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/reports/age-distribution",
+            "description": "Roles: ADMIN, DOCTOR."
+          }
+        },
+        {
+          "name": "Busiest Doctors Report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/reports/busiest-doctors",
+            "description": "Roles: ADMIN, DOCTOR."
+          }
+        }
+      ]
+    }
+  ]
+}

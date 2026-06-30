@@ -1,0 +1,7 @@
+Implemented:
+1. Postman Collection - export of all REST APIs for testing
+
+Not yet implemented:
+1. UML Diagrams - class/ER/layer diagrams for Section E
+2. Collection comparison table as a report endpoint or downloadable doc
+3. Enhanced test coverage - could add more edge-case tests

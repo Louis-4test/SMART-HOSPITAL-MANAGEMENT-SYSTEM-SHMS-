@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: shms-postgres
+    environment:
+      POSTGRES_DB: shms_db
+      POSTGRES_USER: shms_user
+      POSTGRES_PASSWORD: shms_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U shms_user -d shms_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: shms-app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_USERNAME: shms_user
+      DB_PASSWORD: shms_pass
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/shms_db
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
