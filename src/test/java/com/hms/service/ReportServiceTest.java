@@ -23,15 +23,6 @@ class ReportServiceTest {
     private DoctorRepository doctorRepository;
 
     @Mock
-    private AppointmentRepository appointmentRepository;
-
-    @Mock
-    private InvoiceRepository invoiceRepository;
-
-    @Mock
-    private DepartmentRepository departmentRepository;
-
-    @Mock
     private LaboratoryTestRepository laboratoryTestRepository;
 
     private ReportService reportService;
@@ -41,9 +32,6 @@ class ReportServiceTest {
         reportService = new ReportServiceImpl(
                 patientRepository,
                 doctorRepository,
-                appointmentRepository,
-                invoiceRepository,
-                departmentRepository,
                 laboratoryTestRepository
         );
     }
