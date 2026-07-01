@@ -16,6 +16,7 @@ All reports are exposed as REST endpoints via `ReportController` at `/api/v1/rep
 | 8 | `GET /api/v1/reports/monthly-revenue` | `Map<String, Double>` | Revenue aggregated by month |
 | 9 | `GET /api/v1/reports/age-distribution` | `Map<String, Long>` | Patient count by age bracket |
 | 10 | `GET /api/v1/reports/busiest-doctors` | `Map<String, Long>` | Top 10 doctors by appointment count |
+| 11 | `GET /api/v1/reports/collection-comparison` | `List<CollectionComparisonDTO>` | Java Collections Framework comparison table from Section B |
 
 ## Implementation Details
 
@@ -32,6 +33,7 @@ public interface ReportService {
     Map<String, Double> getMonthlyRevenue();
     Map<String, Long> getPatientAgeDistribution();
     Map<String, Long> getTopBusiestDoctors();
+    List<CollectionComparisonDTO> getCollectionComparisonTable();
 }
 ```
 
@@ -49,6 +51,7 @@ public interface ReportService {
 | Monthly revenue | Group by invoice issue date month | JPQL date extraction |
 | Age distribution | Calculate age from dateOfBirth | Case-based bucketing |
 | Top 10 busiest doctors | Sort by appointment count | `ORDER BY SIZE(d.appointments) DESC` |
+| Collection comparison | Static Section B collection analysis | DTO rows grouped by compared collection pair |
 
 ### Why Map-based responses
 - **Flexible**: No rigid DTO needed — new metrics can be added without schema changes

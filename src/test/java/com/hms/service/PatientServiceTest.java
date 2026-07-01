@@ -90,6 +90,75 @@ class PatientServiceTest {
     }
 
     @Test
+    void searchPatient_WithNameAndPhone_ShouldReturnOnlyPhoneMatches() {
+        Patient matching = new Patient();
+        matching.setFirstName("John");
+        matching.setPhone("+1234567890");
+
+        Patient other = new Patient();
+        other.setFirstName("John");
+        other.setPhone("+9999999999");
+
+        when(patientRepository.searchByName("John")).thenReturn(List.of(matching, other));
+
+        List<Patient> results = patientService.searchPatient("John", "+1234567890");
+
+        assertEquals(1, results.size());
+        assertSame(matching, results.get(0));
+    }
+
+    @Test
+    void findByEmail_WhenExists_ShouldReturnPatient() {
+        Patient patient = new Patient();
+        patient.setEmail("john@test.com");
+        when(patientRepository.findByEmail("john@test.com")).thenReturn(Optional.of(patient));
+
+        Patient result = patientService.findByEmail("john@test.com");
+
+        assertNotNull(result);
+        assertEquals("john@test.com", result.getEmail());
+    }
+
+    @Test
+    void update_WhenPatientExists_ShouldCopyMutableFieldsAndSave() {
+        Patient existing = new Patient();
+        existing.setId(1L);
+        existing.setFirstName("Old");
+        existing.setEmail("old@test.com");
+
+        Patient update = new Patient();
+        update.setFirstName("New");
+        update.setLastName("Name");
+        update.setEmail("new@test.com");
+        update.setPhone("+1234567890");
+        update.setGender("Female");
+        update.setBloodType("A+");
+        update.setPatientStatus("ADMITTED");
+
+        when(patientRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(patientRepository.save(existing)).thenReturn(existing);
+
+        Patient result = patientService.update(1L, update);
+
+        assertNotNull(result);
+        assertEquals("New", result.getFirstName());
+        assertEquals("Name", result.getLastName());
+        assertEquals("new@test.com", result.getEmail());
+        assertEquals("ADMITTED", result.getPatientStatus());
+        verify(patientRepository).save(existing);
+    }
+
+    @Test
+    void update_WhenPatientMissing_ShouldReturnNullAndNotSave() {
+        when(patientRepository.findById(44L)).thenReturn(Optional.empty());
+
+        Patient result = patientService.update(44L, new Patient());
+
+        assertNull(result);
+        verify(patientRepository, never()).save(any());
+    }
+
+    @Test
     void delete_ShouldCallRepository() {
         doNothing().when(patientRepository).deleteById(1L);
 

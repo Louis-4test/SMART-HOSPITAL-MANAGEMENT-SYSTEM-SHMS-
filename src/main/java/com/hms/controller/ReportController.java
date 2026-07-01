@@ -1,10 +1,12 @@
 package com.hms.controller;
 
+import com.hms.dto.CollectionComparisonDTO;
 import com.hms.service.ReportService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -75,5 +77,11 @@ public class ReportController {
     @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     public ResponseEntity<Map<String, Long>> getBusiestDoctors() {
         return ResponseEntity.ok(reportService.getTopBusiestDoctors());
+    }
+
+    @GetMapping("/collection-comparison")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
+    public ResponseEntity<List<CollectionComparisonDTO>> getCollectionComparison() {
+        return ResponseEntity.ok(reportService.getCollectionComparisonTable());
     }
 }

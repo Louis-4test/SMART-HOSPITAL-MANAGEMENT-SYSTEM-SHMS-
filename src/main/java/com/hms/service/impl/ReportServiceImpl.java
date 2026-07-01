@@ -1,5 +1,6 @@
 package com.hms.service.impl;
 
+import com.hms.dto.CollectionComparisonDTO;
 import com.hms.entity.*;
 import com.hms.repository.*;
 import com.hms.service.ReportService;
@@ -133,5 +134,44 @@ public class ReportServiceImpl implements ReportService {
         }
         log.debug("Exiting getTopBusiestDoctors: {} doctors", result.size());
         return result;
+    }
+
+    @Override
+    public List<CollectionComparisonDTO> getCollectionComparisonTable() {
+        log.info("Entering getCollectionComparisonTable()");
+        List<CollectionComparisonDTO> result = List.of(
+                row("ArrayList vs LinkedList", "Internal", "Dynamic array", "Doubly-linked list"),
+                row("ArrayList vs LinkedList", "Get(index)", "O(1)", "O(n)"),
+                row("ArrayList vs LinkedList", "Add at end", "O(1) amortized", "O(1)"),
+                row("ArrayList vs LinkedList", "Add at front", "O(n)", "O(1)"),
+                row("ArrayList vs LinkedList", "Memory", "Low per element", "High (prev/next pointers)"),
+                row("ArrayList vs LinkedList", "Best for", "Read-heavy, random access", "Frequent front insertions/deletions"),
+
+                row("HashSet vs TreeSet", "Ordering", "None", "Sorted (Comparable/Comparator)"),
+                row("HashSet vs TreeSet", "Duplicates", "Prevented via hash", "Prevented via compareTo"),
+                row("HashSet vs TreeSet", "Null elements", "Allows one null", "Not allowed"),
+                row("HashSet vs TreeSet", "Performance", "O(1) average", "O(log n)"),
+
+                row("HashMap vs TreeMap", "Key ordering", "None", "Sorted"),
+                row("HashMap vs TreeMap", "Performance", "O(1) average", "O(log n)"),
+                row("HashMap vs TreeMap", "Null keys", "Allows one", "Not allowed"),
+                row("HashMap vs TreeMap", "Best for", "Fast key lookup", "Sorted reports, range queries"),
+
+                row("Queue vs PriorityQueue", "Ordering", "FIFO (arrival)", "Priority (comparator)"),
+                row("Queue vs PriorityQueue", "Head element", "First inserted", "Highest priority"),
+                row("Queue vs PriorityQueue", "Performance", "O(1) add/remove", "O(log n) add/remove"),
+                row("Queue vs PriorityQueue", "Best for", "Fair scheduling", "Emergency triage"),
+
+                row("Stack vs Deque", "Principle", "LIFO", "LIFO + FIFO"),
+                row("Stack vs Deque", "Performance", "O(1) push/pop", "O(1) add/remove both ends"),
+                row("Stack vs Deque", "Legacy", "Yes (extends Vector)", "No (modern collection)"),
+                row("Stack vs Deque", "Best for", "Undo operations", "Navigation history")
+        );
+        log.debug("Exiting getCollectionComparisonTable: {} rows", result.size());
+        return result;
+    }
+
+    private CollectionComparisonDTO row(String comparisonGroup, String feature, String firstCollection, String secondCollection) {
+        return new CollectionComparisonDTO(comparisonGroup, feature, firstCollection, secondCollection);
     }
 }

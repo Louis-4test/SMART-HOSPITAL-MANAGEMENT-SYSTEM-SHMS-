@@ -1,7 +1,45 @@
 Implemented:
 1. Postman Collection - export of all REST APIs for testing
+2. Enhanced test coverage - added service edge-case tests and controller validation/security tests
+3. Collection comparison table - exposed as a report endpoint and added to Postman/docs
 
 Not yet implemented:
 1. UML Diagrams - class/ER/layer diagrams for Section E
-2. Collection comparison table as a report endpoint or downloadable doc
-3. Enhanced test coverage - could add more edge-case tests
+â Missing / Incomplete
+Section E - Reports (25 marks)
+- â UML diagrams (class/ER/layer diagrams)
+- â getPatientsPerDepartment() â stub (returns empty)
+- â getPatientsAdmittedToday() â stub (returns 0)
+- â getMostCommonDiseases() â stub (returns empty)
+- â getRevenueByDepartment() â stub (returns empty)
+- â getMonthlyRevenue() â stub (returns empty)
+- â getPatientAgeDistribution() â stub (returns empty)
+Section F - Business Rules (20 marks)
+- â National ID uniqueness (field exists, but no unique constraint/validation confirmed)
+- â Only admins may delete (need to verify @PreAuthorize on all delete endpoints) 
+
+Completed:
+Section A - OOP
+- â Copy constructor added to User and AuditLog entities
+Section D - Spring Boot
+- â ReceptionistController verified: all CRUD endpoints exist (POST, GET all, GET /{id}, PUT, DELETE)
+- â Database-backed user store: removed InMemoryUserDetailsManager, now uses CustomUserDetailsService with DB
+- â Audit log persistence: created AuditService interface + impl, expanded audit logging to all key operations via HospitalFacade
+Section E - Reports (25 marks)
+- â UML diagrams (class/ER/layer diagrams)
+- â getPatientsPerDepartment() â stub (returns empty)
+- â getPatientsAdmittedToday() â stub (returns 0)
+- â getMostCommonDiseases() â stub (returns empty)
+- â getRevenueByDepartment() â stub (returns empty)
+- â getMonthlyRevenue() â stub (returns empty)
+- â getPatientAgeDistribution() â stub (returns empty)
+Section F - Business Rules (20 marks)
+- â National ID uniqueness (field exists, but no unique constraint/validation confirmed)
+- â Patient email unique (exists)
+- â No overlapping appointments (implemented)
+- â Emergency patients priority (PriorityQueue exists)
+- â Bills after consultation completed (enforced)
+- â Prescriptions after diagnosis (enforced)
+- â Lab tests require doctor's request (enforced)
+- â Only admins may delete (need to verify @PreAuthorize on all delete endpoints)
+- â Soft delete (implemented on Person entity)

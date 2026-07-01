@@ -1,6 +1,7 @@
 package com.hms.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hms.config.SecurityConfig;
 import com.hms.dto.PatientDTO;
 import com.hms.entity.Patient;
 import com.hms.service.PatientService;
@@ -9,6 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -17,12 +19,14 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(PatientController.class)
+@Import(SecurityConfig.class)
 class PatientControllerTest {
 
     @Autowired
@@ -110,5 +114,104 @@ class PatientControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser(roles = "RECEPTIONIST")
+    void createPatient_WithInvalidPayload_ShouldReturn400() throws Exception {
+        PatientDTO dto = new PatientDTO();
+        dto.setFirstName("J");
+        dto.setLastName("");
+        dto.setEmail("not-an-email");
+        dto.setPhone("123");
+
+        mockMvc.perform(post("/api/v1/patients")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors.email").exists())
+                .andExpect(jsonPath("$.errors.firstName").exists())
+                .andExpect(jsonPath("$.errors.lastName").exists());
+    }
+
+    @Test
+    @WithMockUser(roles = "DOCTOR")
+    void createPatient_WithDoctorRole_ShouldReturn403() throws Exception {
+        PatientDTO dto = validPatientDto();
+
+        mockMvc.perform(post("/api/v1/patients")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void updatePatient_WhenServiceReturnsNull_ShouldReturn404() throws Exception {
+        PatientDTO dto = validPatientDto();
+        Patient mappedPatient = new Patient();
+
+        when(modelMapper.map(any(PatientDTO.class), eq(Patient.class))).thenReturn(mappedPatient);
+        when(patientService.update(eq(99L), any(Patient.class))).thenReturn(null);
+
+        mockMvc.perform(put("/api/v1/patients/99")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(roles = "RECEPTIONIST")
+    void partialUpdate_ShouldOnlyApplyProvidedFields() throws Exception {
+        Patient existing = new Patient();
+        existing.setId(1L);
+        existing.setFirstName("John");
+        existing.setLastName("Doe");
+        existing.setEmail("john@test.com");
+
+        PatientDTO patch = new PatientDTO();
+        patch.setPhone("+1234567890");
+        patch.setPatientStatus("DISCHARGED");
+
+        when(patientService.findById(1L)).thenReturn(existing);
+        when(patientService.registerPatient(existing)).thenReturn(existing);
+        when(modelMapper.map(existing, PatientDTO.class)).thenReturn(patch);
+
+        mockMvc.perform(patch("/api/v1/patients/1")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(patch)))
+                .andExpect(status().isOk());
+
+        verify(patientService).registerPatient(existing);
+    }
+
+    @Test
+    @WithMockUser(roles = "NURSE")
+    void searchPatients_ByEmail_ShouldReturnMatchingPatient() throws Exception {
+        Patient patient = new Patient();
+        patient.setEmail("john@test.com");
+
+        when(patientService.findByEmail("john@test.com")).thenReturn(patient);
+        when(modelMapper.map(patient, PatientDTO.class)).thenReturn(validPatientDto());
+
+        mockMvc.perform(get("/api/v1/patients/search")
+                        .param("email", "john@test.com"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].email").value("john@test.com"));
+    }
+
+    private PatientDTO validPatientDto() {
+        PatientDTO dto = new PatientDTO();
+        dto.setFirstName("John");
+        dto.setLastName("Doe");
+        dto.setEmail("john@test.com");
+        dto.setPhone("+1234567890");
+        dto.setGender("Male");
+        dto.setNationalId("NAT-12345");
+        return dto;
     }
 }

@@ -6,12 +6,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -39,35 +35,6 @@ public class SecurityConfig {
             .httpBasic(org.springframework.security.config.Customizer.withDefaults())
             .headers(headers -> headers.frameOptions(frame -> { frame.sameOrigin(); }));
         return http.build();
-    }
-
-    @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails admin = User.builder()
-                .username("admin")
-                .password(passwordEncoder().encode("admin123"))
-                .roles("ADMIN")
-                .build();
-
-        UserDetails doctor = User.builder()
-                .username("doctor")
-                .password(passwordEncoder().encode("doctor123"))
-                .roles("DOCTOR")
-                .build();
-
-        UserDetails nurse = User.builder()
-                .username("nurse")
-                .password(passwordEncoder().encode("nurse123"))
-                .roles("NURSE")
-                .build();
-
-        UserDetails receptionist = User.builder()
-                .username("receptionist")
-                .password(passwordEncoder().encode("reception123"))
-                .roles("RECEPTIONIST")
-                .build();
-
-        return new InMemoryUserDetailsManager(admin, doctor, nurse, receptionist);
     }
 
     @Bean
