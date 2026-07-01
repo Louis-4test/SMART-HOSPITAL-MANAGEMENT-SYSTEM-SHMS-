@@ -1,4 +1,4 @@
 com/hms/controller/PatientControllerTest.class
+com/hms/service/AppointmentServiceTest.class
 com/hms/HmsApplicationTests.class
 com/hms/service/PatientServiceTest.class
-com/hms/service/AppointmentServiceTest.class

@@ -1,5 +1,8 @@
 package com.hms.service;
 
+import com.hms.dto.CollectionComparisonDTO;
+
+import java.util.List;
 import java.util.Map;
 
 public interface ReportService {
@@ -13,4 +16,5 @@ public interface ReportService {
     Map<String, Double> getMonthlyRevenue();
     Map<String, Long> getPatientAgeDistribution();
     Map<String, Long> getTopBusiestDoctors();
+    List<CollectionComparisonDTO> getCollectionComparisonTable();
 }

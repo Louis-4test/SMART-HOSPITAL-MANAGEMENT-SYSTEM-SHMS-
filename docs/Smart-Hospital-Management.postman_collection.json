@@ -900,6 +900,15 @@
             "url": "{{baseUrl}}/api/v1/reports/busiest-doctors",
             "description": "Roles: ADMIN, DOCTOR."
           }
+        },
+        {
+          "name": "Collection Comparison Table",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/v1/reports/collection-comparison",
+            "description": "Roles: ADMIN, DOCTOR. Returns the Section B Java Collections Framework comparison table as structured rows."
+          }
         }
       ]
     }
