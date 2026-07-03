@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.NavigableSet;
+import java.util.Queue;
 
 public interface AppointmentService {
     Appointment createAppointment(Appointment appointment);
@@ -17,4 +19,8 @@ public interface AppointmentService {
     Appointment update(Long id, Appointment appointment);
     void cancelAppointment(Long id);
     void undoCancelAppointment(Long id);
+    void addToConsultationQueue(Long appointmentId);
+    Appointment processNextConsultation();
+    Queue<Appointment> getConsultationQueue();
+    NavigableSet<Appointment> getSortedAppointments();
 }

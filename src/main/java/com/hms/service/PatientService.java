@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Queue;
 
 public interface PatientService {
     Patient registerPatient(Patient patient);
@@ -18,4 +19,10 @@ public interface PatientService {
     Page<Patient> findAll(Pageable pageable);
     Patient update(Long id, Patient patient);
     void delete(Long id);
+    void addToERQueue(Patient patient);
+    Patient processNextERPatient();
+    Queue<Patient> getERQueue();
+    void addToEmergencyTriage(Patient patient, int severityLevel);
+    Patient processNextEmergencyPatient();
+    Queue<Patient> getEmergencyTriageQueue();
 }

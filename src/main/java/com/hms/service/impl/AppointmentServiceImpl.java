@@ -12,8 +12,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.NavigableSet;
+import java.util.Queue;
 import java.util.Stack;
+import java.util.TreeSet;
 
 @Service
 @Transactional
@@ -21,9 +26,21 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
     private final Stack<Appointment> cancellationUndoStack = new Stack<>();
+    private final NavigableSet<Appointment> sortedAppointments = new TreeSet<>(
+            Comparator.comparing(Appointment::getAppointmentDate,
+                    Comparator.nullsLast(Comparator.naturalOrder()))
+                      .thenComparing(Appointment::getId,
+                              Comparator.nullsLast(Comparator.naturalOrder()))
+    );
+    private final Queue<Appointment> consultationQueue = new LinkedList<>();
 
     public AppointmentServiceImpl(AppointmentRepository appointmentRepository) {
         this.appointmentRepository = appointmentRepository;
+        appointmentRepository.findAll().forEach(a -> {
+            if (!"CANCELLED".equals(a.getStatus())) {
+                sortedAppointments.add(a);
+            }
+        });
     }
 
     private static final Logger log = LoggerFactory.getLogger(AppointmentServiceImpl.class);
@@ -49,6 +66,9 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
 
         Appointment result = appointmentRepository.save(appointment);
+        if (result != null && !"CANCELLED".equals(result.getStatus())) {
+            sortedAppointments.add(result);
+        }
         log.debug("Exiting createAppointment: {}", result);
         return result;
     }
@@ -109,11 +129,15 @@ public class AppointmentServiceImpl implements AppointmentService {
             log.debug("Exiting update: appointment not found");
             return null;
         }
+        sortedAppointments.remove(existing);
         existing.setAppointmentDate(appointment.getAppointmentDate());
         existing.setStatus(appointment.getStatus());
         existing.setReason(appointment.getReason());
         existing.setNotes(appointment.getNotes());
         Appointment result = appointmentRepository.save(existing);
+        if (result != null && !"CANCELLED".equals(result.getStatus())) {
+            sortedAppointments.add(result);
+        }
         log.debug("Exiting update: {}", result);
         return result;
     }
@@ -137,7 +161,36 @@ public class AppointmentServiceImpl implements AppointmentService {
             Appointment cancelled = cancellationUndoStack.pop();
             cancelled.setStatus("SCHEDULED");
             appointmentRepository.save(cancelled);
+            sortedAppointments.add(cancelled);
         }
         log.debug("Exiting undoCancelAppointment");
+    }
+
+    @Override
+    public void addToConsultationQueue(Long appointmentId) {
+        log.info("Entering addToConsultationQueue({})", appointmentId);
+        Appointment appointment = appointmentRepository.findById(appointmentId).orElse(null);
+        if (appointment != null) {
+            consultationQueue.add(appointment);
+            log.debug("Exiting addToConsultationQueue: queue size {}", consultationQueue.size());
+        }
+    }
+
+    @Override
+    public Appointment processNextConsultation() {
+        log.info("Entering processNextConsultation()");
+        Appointment appointment = consultationQueue.poll();
+        log.debug("Exiting processNextConsultation: {}", appointment);
+        return appointment;
+    }
+
+    @Override
+    public Queue<Appointment> getConsultationQueue() {
+        return new LinkedList<>(consultationQueue);
+    }
+
+    @Override
+    public NavigableSet<Appointment> getSortedAppointments() {
+        return new TreeSet<>(sortedAppointments);
     }
 }

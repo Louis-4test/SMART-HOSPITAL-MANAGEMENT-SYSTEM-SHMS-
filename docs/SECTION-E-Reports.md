@@ -39,19 +39,19 @@ public interface ReportService {
 
 ### Data Sources
 
-| Report | Data Source | Query Approach |
-|---|---|---|
-| Total patients | `PatientRepository.count()` | JPA built-in |
-| Patients per department | Join Patient → Appointment → Doctor → Department | Aggregate query |
-| Admitted today | Filter patients by admission date | JPQL date comparison |
-| Doctor workload | Count appointments per doctor | `DoctorRepository.findBusiestDoctors()` |
-| Most common diseases | Aggregate diagnosis records | JPQL GROUP BY |
-| Lab test statistics | Group by test name | In-memory aggregation |
-| Revenue by department | Join Invoice → Appointment → Doctor → Department | Sum group by department |
-| Monthly revenue | Group by invoice issue date month | JPQL date extraction |
-| Age distribution | Calculate age from dateOfBirth | Case-based bucketing |
-| Top 10 busiest doctors | Sort by appointment count | `ORDER BY SIZE(d.appointments) DESC` |
-| Collection comparison | Static Section B collection analysis | DTO rows grouped by compared collection pair |
+| Report | Data Source | Implementation |
+|---|---|---|---|
+| Total patients | `PatientRepository.count()` | JPA built-in method |
+| Patients per department | Department → Doctor → Appointment → Patient | `TreeMap` via stream aggregation |
+| Admitted today | `Patient.createdAt` | In-memory filter by `LocalDate.now()` |
+| Doctor workload | `Doctor.getAppointments()` | Stream count per doctor |
+| Most common diseases | `Appointment.reason` | `Collectors.groupingBy` with `TreeMap` |
+| Lab test statistics | `LaboratoryTest.testName` | In-memory `HashMap` merge |
+| Revenue by department | `Invoice.totalAmount` → Appointment → Doctor → Department | `TreeMap` with null-safe traversal |
+| Monthly revenue | `Invoice.issueDate` | `TreeMap` grouped by month/year |
+| Age distribution | `Patient.dateOfBirth` | Age calculation with 6 bucket ranges |
+| Top 10 busiest doctors | `DoctorRepository.findBusiestDoctors()` | JPQL `ORDER BY SIZE(appointments)` |
+| Collection comparison | Static comparison data | DTO rows grouped by collection pair |
 
 ### Why Map-based responses
 - **Flexible**: No rigid DTO needed — new metrics can be added without schema changes
@@ -59,13 +59,11 @@ public interface ReportService {
 - **Lightweight**: Simple JSON without wrapper objects
 
 ### UML Diagrams
-UML class diagrams should be generated separately using a tool like:
-- **PlantUML** — Text-based UML generation
-- **IntelliJ UML** — Built-in diagram generation from source
-- **draw.io** — Manual diagram creation
+Generated using **PlantUML** — source files in `docs/diagrams/`:
 
-Key diagrams to produce:
-1. **Class diagram** — All entities, inheritance, relationships
-2. **Layer diagram** — Controller → Service → Repository → Database
-3. **Design pattern diagrams** — Strategy, Observer, Adapter, Template Method
-4. **ER diagram** — Entity relationships with cardinalities
+| Diagram | File | Description |
+|---|---|---|
+| **Class Diagram** | `docs/diagrams/class-diagram.png` | All 15 entities with inheritance, composition, aggregation, and associations |
+| **ER Diagram** | `docs/diagrams/er-diagram.png` | Database tables with columns, keys, and relationships |
+| **Layer Diagram** | `docs/diagrams/layer-diagram.png` | Controller → Service → Repository → Database + design patterns |
+| **Design Patterns** | `docs/diagrams/design-patterns.png` | Factory, Builder, Strategy, Observer, Adapter, Facade, Template Method |

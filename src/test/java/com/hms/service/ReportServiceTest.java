@@ -25,6 +25,15 @@ class ReportServiceTest {
     @Mock
     private LaboratoryTestRepository laboratoryTestRepository;
 
+    @Mock
+    private DepartmentRepository departmentRepository;
+
+    @Mock
+    private AppointmentRepository appointmentRepository;
+
+    @Mock
+    private InvoiceRepository invoiceRepository;
+
     private ReportService reportService;
 
     @BeforeEach
@@ -32,7 +41,10 @@ class ReportServiceTest {
         reportService = new ReportServiceImpl(
                 patientRepository,
                 doctorRepository,
-                laboratoryTestRepository
+                laboratoryTestRepository,
+                departmentRepository,
+                appointmentRepository,
+                invoiceRepository
         );
     }
 

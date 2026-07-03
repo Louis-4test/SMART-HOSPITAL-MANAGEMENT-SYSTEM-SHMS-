@@ -84,4 +84,8 @@ public abstract class Person {
     public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
 
     public void displayProfile() {}
+
+    public String generateReport() {
+        return "Person Report: " + firstName + " " + lastName;
+    }
 }

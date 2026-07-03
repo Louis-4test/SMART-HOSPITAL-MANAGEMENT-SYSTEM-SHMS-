@@ -112,4 +112,25 @@ public class PatientController {
                 .map(p -> modelMapper.map(p, PatientDTO.class))
                 .toList());
     }
+
+    @GetMapping("/filter")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR', 'NURSE', 'RECEPTIONIST')")
+    public ResponseEntity<List<PatientDTO>> filterPatients(
+            @RequestParam(required = false) String gender,
+            @RequestParam(required = false) String status) {
+        List<Patient> results = patientService.findAll();
+        if (gender != null) {
+            results = results.stream()
+                    .filter(p -> gender.equalsIgnoreCase(p.getGender()))
+                    .toList();
+        }
+        if (status != null) {
+            results = results.stream()
+                    .filter(p -> status.equalsIgnoreCase(p.getPatientStatus()))
+                    .toList();
+        }
+        return ResponseEntity.ok(results.stream()
+                .map(p -> modelMapper.map(p, PatientDTO.class))
+                .toList());
+    }
 }

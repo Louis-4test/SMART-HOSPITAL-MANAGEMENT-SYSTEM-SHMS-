@@ -30,4 +30,11 @@ public class Receptionist extends Person {
     public void displayProfile() {
         System.out.println("Receptionist: " + getFirstName() + " " + getLastName() + " | Code: " + employeeCode);
     }
+
+    @Override
+    public String generateReport() {
+        return "Receptionist Report: " + getFirstName() + " " + getLastName()
+                + " | Code: " + employeeCode
+                + " | Shift: " + shift;
+    }
 }

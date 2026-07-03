@@ -1,0 +1,117 @@
+@startuml
+!theme plain
+skinparam packageStyle rectangle
+skinparam backgroundColor #FEFEFE
+
+title "Layered Architecture - Smart Hospital Management System"
+
+package "Controller Layer" as CONTROLLER {
+  [PatientController]
+  [DoctorController]
+  [NurseController]
+  [ReceptionistController]
+  [AppointmentController]
+  [BillingController]
+  [PrescriptionController]
+  [LaboratoryTestController]
+  [DepartmentController]
+  [ReportController]
+  [NavigationController]
+}
+
+package "Service Layer" as SERVICE {
+  [PatientService]
+  [DoctorService]
+  [NurseService]
+  [ReceptionistService]
+  [AppointmentService]
+  [BillingService]
+  [PrescriptionService]
+  [LaboratoryTestService]
+  [DepartmentService]
+  [ReportService]
+  [AuditService]
+  [NavigationService]
+  [PersonService]
+
+  package "Service Impl" as IMPL {
+    [PatientServiceImpl]
+    [DoctorServiceImpl]
+    [NurseServiceImpl]
+    [ReceptionistServiceImpl]
+    [AppointmentServiceImpl]
+    [BillingServiceImpl]
+    [PrescriptionServiceImpl]
+    [LaboratoryTestServiceImpl]
+    [DepartmentServiceImpl]
+    [ReportServiceImpl]
+    [AuditServiceImpl]
+    [NavigationServiceImpl]
+    [PersonServiceImpl]
+  }
+}
+
+package "Repository Layer" as REPO {
+  [PatientRepository]
+  [DoctorRepository]
+  [NurseRepository]
+  [ReceptionistRepository]
+  [AppointmentRepository]
+  [InvoiceRepository]
+  [PrescriptionRepository]
+  [LaboratoryTestRepository]
+  [DepartmentRepository]
+  [MedicalRecordRepository]
+  [AddressRepository]
+  [EmergencyContactRepository]
+  [AuditLogRepository]
+  [UserRepository]
+}
+
+package "Entity Layer" as ENTITY {
+  [Person]
+  [Patient]
+  [Doctor]
+  [Nurse]
+  [Receptionist]
+  [User]
+  [Department]
+  [Appointment]
+  [Invoice]
+  [Prescription]
+  [LaboratoryTest]
+  [MedicalRecord]
+  [EmergencyContact]
+  [Address]
+  [AuditLog]
+}
+
+package "Database" as DB {
+  (H2 / PostgreSQL)
+}
+
+package "Design Patterns" as PATTERNS {
+  [HospitalFactory] as FACTORY
+  [PatientBuilder] as BUILDER
+  [BillingStrategy] as STRATEGY
+  [PatientAdmittedEvent] as OBSERVER
+  [PaymentGateway] as ADAPTER
+  [HospitalFacade] as FACADE
+  [AdmissionWorkflow] as TEMPLATE
+}
+
+CONTROLLER --> SERVICE : "REST calls"
+SERVICE --> REPO : "data access"
+REPO --> ENTITY : "JPA mappings"
+ENTITY --> DB : "persistence"
+
+SERVICE --> PATTERNS : "uses"
+
+note right of CONTROLLER : @RestController\n/api/v1/*
+note right of SERVICE : @Service\nBusiness Logic
+note right of REPO : @Repository\nSpring Data JPA
+note right of ENTITY : @Entity\nJPA Entities
+note right of DB : H2 (dev)\nPostgreSQL (prod)
+note right of PATTERNS : 7 Enterprise\nDesign Patterns
+
+@enduml

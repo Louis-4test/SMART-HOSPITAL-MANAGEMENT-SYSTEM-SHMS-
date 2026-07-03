@@ -16,6 +16,7 @@
 /home/fola/Documents/Java/enterprise-app/src/main/java/com/hms/entity/User.java
 /home/fola/Documents/Java/enterprise-app/src/main/java/com/hms/repository/AddressRepository.java
 /home/fola/Documents/Java/enterprise-app/src/main/java/com/hms/service/impl/ReceptionistServiceImpl.java
+/home/fola/Documents/Java/enterprise-app/src/main/java/com/hms/controller/NavigationController.java
 /home/fola/Documents/Java/enterprise-app/src/main/java/com/hms/controller/PatientController.java
 /home/fola/Documents/Java/enterprise-app/src/main/java/com/hms/repository/EmergencyContactRepository.java
 /home/fola/Documents/Java/enterprise-app/src/main/java/com/hms/repository/DoctorRepository.java
@@ -26,6 +27,7 @@
 /home/fola/Documents/Java/enterprise-app/src/main/java/com/hms/service/BillingService.java
 /home/fola/Documents/Java/enterprise-app/src/main/java/com/hms/service/NurseService.java
 /home/fola/Documents/Java/enterprise-app/src/main/java/com/hms/service/ReportService.java
+/home/fola/Documents/Java/enterprise-app/src/main/java/com/hms/service/NavigationService.java
 /home/fola/Documents/Java/enterprise-app/src/main/java/com/hms/service/impl/DepartmentServiceImpl.java
 /home/fola/Documents/Java/enterprise-app/src/main/java/com/hms/service/DepartmentService.java
 /home/fola/Documents/Java/enterprise-app/src/main/java/com/hms/exception/PatientNotFoundException.java
@@ -92,6 +94,7 @@
 /home/fola/Documents/Java/enterprise-app/src/main/java/com/hms/service/impl/DoctorServiceImpl.java
 /home/fola/Documents/Java/enterprise-app/src/main/java/com/hms/strategy/GeneralConsultationBilling.java
 /home/fola/Documents/Java/enterprise-app/src/main/java/com/hms/strategy/SurgeryBilling.java
+/home/fola/Documents/Java/enterprise-app/src/main/java/com/hms/service/impl/NavigationServiceImpl.java
 /home/fola/Documents/Java/enterprise-app/src/main/java/com/hms/dto/MedicalRecordDTO.java
 /home/fola/Documents/Java/enterprise-app/src/main/java/com/hms/config/CustomUserDetailsService.java
 /home/fola/Documents/Java/enterprise-app/src/main/java/com/hms/service/impl/AppointmentServiceImpl.java

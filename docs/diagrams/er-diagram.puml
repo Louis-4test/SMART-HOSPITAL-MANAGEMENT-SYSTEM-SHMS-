@@ -1,0 +1,175 @@
+@startuml
+!theme plain
+skinparam linetype ortho
+
+' Entities as tables
+entity "person" as person {
+  * id : bigint <<generated>>
+  --
+  * person_type : varchar
+  * first_name : varchar
+  * last_name : varchar
+  * email : varchar <<unique>>
+  * phone : varchar
+  * address : varchar
+  * deleted : boolean
+  * created_at : timestamp
+  * updated_at : timestamp
+  * created_by : varchar
+  --
+  date_of_birth : date
+  gender : varchar
+  blood_type : varchar
+  national_id : varchar <<unique>>
+  patient_status : varchar
+  severity_level : int
+  license_number : varchar <<unique>>
+  specialization : varchar
+  years_of_experience : int
+  shift : varchar
+  department : varchar
+  employee_code : varchar
+  department_id : bigint <<FK>>
+  medical_record_id : bigint <<FK>>
+  emergency_contact_id : bigint <<FK>>
+  patient_address_id : bigint <<FK>>
+}
+
+entity "departments" as dept {
+  * id : bigint <<generated>>
+  --
+  * name : varchar <<unique>>
+  * description : varchar
+  * location : varchar
+  * created_at : timestamp
+  * updated_at : timestamp
+  * created_by : varchar
+}
+
+entity "appointments" as appt {
+  * id : bigint <<generated>>
+  --
+  * appointment_date : timestamp
+  * status : varchar
+  * reason : varchar
+  * notes : varchar
+  * patient_id : bigint <<FK>>
+  * doctor_id : bigint <<FK>>
+  * created_at : timestamp
+  * updated_at : timestamp
+  * created_by : varchar
+}
+
+entity "invoices" as inv {
+  * id : bigint <<generated>>
+  --
+  * invoice_number : varchar <<unique>>
+  * amount : double
+  * tax : double
+  * total_amount : double
+  * issue_date : date
+  * due_date : date
+  * status : varchar
+  * appointment_id : bigint <<FK>> <<unique>>
+  * created_at : timestamp
+  * updated_at : timestamp
+  * created_by : varchar
+}
+
+entity "prescriptions" as rx {
+  * id : bigint <<generated>>
+  --
+  * medication_name : varchar
+  * dosage : varchar
+  * frequency : varchar
+  * duration : varchar
+  * issue_date : date
+  * patient_id : bigint <<FK>>
+  * created_at : timestamp
+  * updated_at : timestamp
+  * created_by : varchar
+}
+
+entity "laboratory_tests" as lab {
+  * id : bigint <<generated>>
+  --
+  * test_name : varchar
+  * test_date : timestamp
+  * result : varchar
+  * status : varchar
+  * requested_by_doctor : varchar
+  * created_at : timestamp
+  * updated_at : timestamp
+  * created_by : varchar
+}
+
+entity "patient_lab_tests" as plt {
+  * patient_id : bigint <<FK>>
+  * lab_test_id : bigint <<FK>>
+  --
+  ## composite PK (patient_id, lab_test_id)
+}
+
+entity "medical_records" as mr {
+  * id : bigint <<generated>>
+  --
+  * blood_type : varchar
+  * allergies : varchar
+  * chronic_conditions : varchar
+  * past_surgeries : varchar
+  * family_history : varchar
+  * insurance_info : varchar
+}
+
+entity "emergency_contacts" as ec {
+  * id : bigint <<generated>>
+  --
+  * full_name : varchar
+  * relationship : varchar
+  * phone : varchar
+  * alternate_phone : varchar
+}
+
+entity "addresses" as addr {
+  * id : bigint <<generated>>
+  --
+  * street : varchar
+  * city : varchar
+  * state : varchar
+  * zip_code : varchar
+  * country : varchar
+}
+
+entity "users" as usr {
+  * id : bigint <<generated>>
+  --
+  * username : varchar <<unique>>
+  * password : varchar
+  * role : varchar
+  * enabled : boolean
+}
+
+entity "audit_logs" as al {
+  * id : bigint <<generated>>
+  --
+  * action : varchar
+  * entity_type : varchar
+  * entity_id : bigint
+  * details : varchar
+  * performed_by : varchar
+  * timestamp : timestamp
+}
+
+' Relationships
+dept ||--o{ person : "department_id" (Doctor only)
+person ||--o{ appt : "patient_id" (Patient only)
+person ||--o{ appt : "doctor_id" (Doctor only)
+appt ||--|| inv : "appointment_id"
+person ||--o{ rx : "patient_id" (Patient only)
+person ||--o{ plt : "patient_id" (Patient only)
+lab ||--o{ plt : "lab_test_id"
+person ||--|| mr : "medical_record_id" (Patient only)
+person ||--|| ec : "emergency_contact_id" (Patient only)
+person ||--|| addr : "patient_address_id" (Patient only)
+
+@enduml

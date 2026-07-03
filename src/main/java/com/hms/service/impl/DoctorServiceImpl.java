@@ -11,16 +11,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
 public class DoctorServiceImpl implements DoctorService {
 
     private final DoctorRepository doctorRepository;
+    private final Set<String> licenseNumbers = new HashSet<>();
 
     public DoctorServiceImpl(DoctorRepository doctorRepository) {
         this.doctorRepository = doctorRepository;
+        doctorRepository.findAll().forEach(d -> {
+            if (d.getLicenseNumber() != null) {
+                licenseNumbers.add(d.getLicenseNumber());
+            }
+        });
     }
 
     private static final Logger log = LoggerFactory.getLogger(DoctorServiceImpl.class);
@@ -28,6 +36,9 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public Doctor registerDoctor(Doctor doctor) {
         log.info("Entering registerDoctor({})", doctor);
+        if (doctor.getLicenseNumber() != null) {
+            licenseNumbers.add(doctor.getLicenseNumber());
+        }
         Doctor result = doctorRepository.save(doctor);
         log.debug("Exiting registerDoctor: {}", result);
         return result;
@@ -103,6 +114,10 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public void delete(Long id) {
         log.info("Entering delete({})", id);
+        Doctor doctor = doctorRepository.findById(id).orElse(null);
+        if (doctor != null && doctor.getLicenseNumber() != null) {
+            licenseNumbers.remove(doctor.getLicenseNumber());
+        }
         doctorRepository.deleteById(id);
         log.debug("Exiting delete");
     }
@@ -113,5 +128,15 @@ public class DoctorServiceImpl implements DoctorService {
         List<Doctor> result = doctorRepository.findBusiestDoctors();
         log.debug("Exiting getBusiestDoctors: {} results", result.size());
         return result;
+    }
+
+    @Override
+    public Set<String> getAllLicenseNumbers() {
+        return Set.copyOf(licenseNumbers);
+    }
+
+    @Override
+    public boolean isLicenseNumberRegistered(String licenseNumber) {
+        return licenseNumbers.contains(licenseNumber);
     }
 }

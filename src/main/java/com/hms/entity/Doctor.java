@@ -53,4 +53,12 @@ public class Doctor extends Person {
     public double calculateCharges() {
         return 0;
     }
+
+    @Override
+    public String generateReport() {
+        return "Doctor Report: Dr. " + getFirstName() + " " + getLastName()
+                + " | Specialization: " + specialization
+                + " | License: " + licenseNumber
+                + " | Experience: " + yearsOfExperience + " yrs";
+    }
 }
