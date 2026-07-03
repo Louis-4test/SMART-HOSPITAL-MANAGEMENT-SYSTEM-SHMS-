@@ -1,45 +1,136 @@
-Implemented:
-1. Postman Collection - export of all REST APIs for testing
-2. Enhanced test coverage - added service edge-case tests and controller validation/security tests
-3. Collection comparison table - exposed as a report endpoint and added to Postman/docs
+# Smart Hospital Management System — Full Assignment Tracker
 
-Not yet implemented:
-1. UML Diagrams - class/ER/layer diagrams for Section E
-â Missing / Incomplete
-Section E - Reports (25 marks)
-- â UML diagrams (class/ER/layer diagrams)
-- â getPatientsPerDepartment() â stub (returns empty)
-- â getPatientsAdmittedToday() â stub (returns 0)
-- â getMostCommonDiseases() â stub (returns empty)
-- â getRevenueByDepartment() â stub (returns empty)
-- â getMonthlyRevenue() â stub (returns empty)
-- â getPatientAgeDistribution() â stub (returns empty)
-Section F - Business Rules (20 marks)
-- â National ID uniqueness (field exists, but no unique constraint/validation confirmed)
-- â Only admins may delete (need to verify @PreAuthorize on all delete endpoints) 
+## SECTION A: OOP (40 marks)
 
-Completed:
-Section A - OOP
-- â Copy constructor added to User and AuditLog entities
-Section D - Spring Boot
-- â ReceptionistController verified: all CRUD endpoints exist (POST, GET all, GET /{id}, PUT, DELETE)
-- â Database-backed user store: removed InMemoryUserDetailsManager, now uses CustomUserDetailsService with DB
-- â Audit log persistence: created AuditService interface + impl, expanded audit logging to all key operations via HospitalFacade
-Section E - Reports (25 marks)
-- â UML diagrams (class/ER/layer diagrams)
-- â getPatientsPerDepartment() â stub (returns empty)
-- â getPatientsAdmittedToday() â stub (returns 0)
-- â getMostCommonDiseases() â stub (returns empty)
-- â getRevenueByDepartment() â stub (returns empty)
-- â getMonthlyRevenue() â stub (returns empty)
-- â getPatientAgeDistribution() â stub (returns empty)
-Section F - Business Rules (20 marks)
-- â National ID uniqueness (field exists, but no unique constraint/validation confirmed)
-- â Patient email unique (exists)
-- â No overlapping appointments (implemented)
-- â Emergency patients priority (PriorityQueue exists)
-- â Bills after consultation completed (enforced)
-- â Prescriptions after diagnosis (enforced)
-- â Lab tests require doctor's request (enforced)
-- â Only admins may delete (need to verify @PreAuthorize on all delete endpoints)
-- â Soft delete (implemented on Person entity)
+| Req | Description | Status | Notes |
+|-----|-------------|--------|-------|
+| 1 | Encapsulation (private attrs, getters/setters) | ✅ Done | All entities have private fields + getters/setters |
+| 2 | Inheritance (Person → Patient/Doctor/Nurse/Receptionist) | ✅ Done | `Person` abstract, SINGLE_TABLE inheritance |
+| 3 | Abstraction (PersonService, PatientService, etc.) | ✅ Done | 11 service interfaces + impls |
+| 4 | Polymorphism (Person ref → Patient/Doctor/Nurse) | ✅ Done | JPA inheritance hierarchy, PersonService |
+| 5 | Method Overloading (searchPatient() overloads) | ✅ Done | `PatientServiceImpl` — by id, name, email, name+phone |
+| 6 | Method Overriding (displayProfile, calculateCharges, generateReport) | ✅ Done | Entities override inherited methods |
+| 7 | Composition (Patient has MedicalRecord, EmergencyContact, Address) | ✅ Done | CascadeType.ALL, owned entities |
+| 8 | Aggregation (Department has many Doctors) | ✅ Done | Department → @OneToMany Doctor |
+| 9 | Association (Patients consult Doctors) | ✅ Done | Entity relationships established |
+| 10 | Constructors (default, parameterized, copy) | ⚠️ Partial | Copy constructor on User, AuditLog only — add to other entities |
+
+## SECTION B: Java Collections Framework (35 marks)
+
+| Req | Collection | Status | Notes |
+|-----|-----------|--------|-------|
+| 11 | ArrayList — store patients | ✅ Done | JPA `List` fields + explicit in `PatientServiceImpl` |
+| 12 | LinkedList — ER waiting patients | ❌ Missing | Only in comparison report, not used in production code |
+| 13 | HashSet — doctor license numbers | ❌ Missing | Only in comparison report, not used in production code |
+| 14 | TreeSet — appointments sorted by date | ❌ Missing | Only in comparison report, not used in production code |
+| 15 | HashMap — patient records by ID | ✅ Done | Used in ReportServiceImpl, exception handling |
+| 16 | TreeMap — reports by department name | ❌ Missing | Only in comparison report, not used in production code |
+| 17 | Queue (FIFO) — consultation queue | ❌ Missing | Only in comparison report, not used in production code |
+| 18 | PriorityQueue — emergency patients by severity | ❌ Missing | Described in SECTION-F docs but not in actual code |
+| 19 | Stack — undo appointment cancellation | ✅ Done | `AppointmentServiceImpl.cancellationUndoStack` |
+| 20 | Deque — navigation history | ❌ Missing | Only in comparison report, not used in production code |
+| 21 | Collection Comparison table | ✅ Done | 22-row DTO endpoint at `/api/v1/reports/collection-comparison` |
+
+## SECTION C: MVC Architecture (20 marks)
+
+| Req | Status | Notes |
+|-----|--------|-------|
+| Entity (Model) layer | ✅ Done | 14 entities in `entity/` package |
+| Repository layer | ✅ Done | 14 JPA repositories in `repository/` package |
+| Service layer | ✅ Done | 11 interfaces + 12 impls in `service/` + `service/impl/` |
+| Controller layer | ✅ Done | 10 controllers in `controller/` package |
+| Business logic NOT in controllers | ✅ Done | All logic in service layer |
+
+## SECTION D: Spring Boot Enterprise Development (80 marks)
+
+| Req | Status | Notes |
+|-----|--------|-------|
+| Spring Initializr project | ✅ Done | `pom.xml` with Spring Boot 3.2.5, Java 21 |
+| Maven dependency management | ✅ Done | All dependencies declared |
+| Dependency Injection | ✅ Done | `@Autowired` / constructor injection throughout |
+| Bean Management | ✅ Done | `@Bean`, `@Component`, `@Service`, `@Repository` |
+| Component Scanning | ✅ Done | Default Spring Boot scanning |
+| Configuration Files | ✅ Done | `application.yml`, `application-dev.yml`, `application-prod.yml` |
+| Spring Profiles | ✅ Done | dev/prod profiles with H2/PostgreSQL |
+| REST: POST | ✅ Done | All controllers |
+| REST: GET | ✅ Done | All controllers |
+| REST: PUT | ✅ Done | All controllers |
+| REST: PATCH | ✅ Done | `PatientController.partialUpdate()` |
+| REST: DELETE | ✅ Done | All controllers, admin-only |
+| Validation: @NotBlank, @NotNull, @Email, @Pattern, @Size, @Positive, @Past, @Future | ✅ Done | DTOs annotated |
+| DTO Pattern | ✅ Done | 13 DTOs in `dto/` package |
+| Repository Pattern (JpaRepository) | ✅ Done | 14 repositories |
+| Service Pattern | ✅ Done | Annotated `@Service` classes |
+| Factory Pattern (HospitalFactory) | ✅ Done | Static factory methods |
+| Builder Pattern (PatientBuilder, DoctorBuilder) | ✅ Done | Fluent builders |
+| Singleton Pattern (explanation) | ⚠️ Needs docs | Spring beans are singleton by default — document reasoning |
+| Strategy Pattern (BillingStrategy) | ✅ Done | 4 strategies: General, Surgery, Lab, Pharmacy |
+| Observer Pattern (PatientAdmittedEvent) | ✅ Done | Spring `ApplicationEvent` + 4 `@EventListener` |
+| Adapter Pattern (PaymentGateway) | ✅ Done | ExternalPaymentService → ExternalPaymentGatewayAdapter |
+| Facade Pattern (HospitalFacade) | ✅ Done | Coordinates admit, lab test, billing, discharge |
+| Template Method (AdmissionWorkflow) | ✅ Done | EmergencyAdmission + OutpatientAdmission |
+| Global Exception Handling (@ControllerAdvice) | ✅ Done | `GlobalExceptionHandler` |
+| Custom Exceptions | ✅ Done | 5 custom exceptions |
+| Transaction Management (@Transactional) | ⚠️ Needs verification | Check if `@Transactional` is on all needed service methods |
+| Logging (SLF4J) | ✅ Done | SLF4J loggers in service classes |
+| Pagination | ⚠️ Needs verification | Check if Pageable is used in controllers |
+| Sorting | ⚠️ Needs verification | Check if Sort is supported |
+| Filtering | ⚠️ Needs verification | Check query params for department/doctor/gender/status/date |
+| Searching (Derived, JPQL, Native SQL) | ✅ Done | Multiple query types in repositories |
+| Entity Relationships (all 6) | ✅ Done | 1:M, M:M, 1:1 relationships defined |
+| Cascade Operations (ALL, PERSIST, MERGE, REMOVE) | ⚠️ Needs verification | Verify cascade types used appropriately |
+| Fetch Strategies (LAZY, EAGER) | ✅ Done | Lazy by default, Eager where needed |
+| Auditing (createdAt, updatedAt, createdBy) | ✅ Done | `AuditConfig` with `AuditorAware` |
+| Security: Spring Security | ✅ Done | `SecurityConfig`, BCrypt, role-based |
+| Security: Roles (ADMIN, DOCTOR, NURSE, RECEPTIONIST) | ✅ Done | 4 seeded users |
+| API Documentation (Swagger/OpenAPI) | ✅ Done | `/swagger-ui/`, `/v3/api-docs/` |
+| Postman Collection | ✅ Done | In `docs/` directory |
+| JUnit + Mockito + MockMvc tests | ✅ Done | 8 test files in `src/test/java` |
+
+## SECTION E: Reports (25 marks)
+
+| Req | Status | Notes |
+|-----|--------|-------|
+| UML diagrams (class/ER/layer) | ❌ Missing | Documented intent in SECTION-E-Reports.md but no actual diagrams |
+| Total registered patients | ✅ Done | `patientRepository.count()` |
+| Patients per department | ❌ **STUB** | Returns `Map.of()` — needs real aggregation query |
+| Patients admitted today | ❌ **STUB** | Returns `0` — needs JPQL date comparison |
+| Doctor workload | ✅ Done | Iterates doctors + counts appointments |
+| Most common diseases | ❌ **STUB** | Returns `Map.of()` — needs JPQL GROUP BY |
+| Laboratory test statistics | ✅ Done | Groups by test name |
+| Revenue by department | ❌ **STUB** | Returns `Map.of()` — needs join Invoice → Appointment → Doctor → Department |
+| Monthly revenue | ❌ **STUB** | Returns `Map.of()` — needs date extraction grouping |
+| Patient age distribution | ❌ **STUB** | Returns `Map.of()` — needs DOB → age bucket logic |
+| Top 10 busiest doctors | ✅ Done | `doctorRepository.findBusiestDoctors()` |
+| Collection comparison | ✅ Done | 22-row DTO endpoint |
+
+## SECTION F: Business Rules (20 marks)
+
+| Rule | Status | Notes |
+|------|--------|-------|
+| 1. National ID unique | ✅ Done | `@Column(unique = true)` on `Patient.nationalId` |
+| 2. Patient email unique | ✅ Done | `@Column(unique = true)` on `Person.email` |
+| 3. Doctor: no overlapping appointments | ✅ Done | JPQL overlap check in `AppointmentServiceImpl` |
+| 4. Patient: no double-booking | ✅ Done | JPQL count check in `AppointmentServiceImpl` |
+| 5. Emergency patients priority | ❌ Missing | `SECTION-F.md` describes it but no `PriorityQueue<Patient>` in production code |
+| 6. Bills after consultation completed | ✅ Done | Status check in `BillingServiceImpl.generateInvoice()` |
+| 7. Prescriptions after diagnosis | ✅ Done | Appointment status check in `PrescriptionServiceImpl` |
+| 8. Lab tests require doctor's request | ✅ Done | Field validation in `LaboratoryTestServiceImpl` |
+| 9. Only admins may delete | ✅ Done | `SecurityConfig` guards `DELETE /**` + `@PreAuthorize` on all `@DeleteMapping` |
+| 10. Soft delete | ✅ Done | `@SQLDelete` + `@SQLRestriction` on `Person` |
+
+## SUMMARY OF REMAINING WORK
+
+### Critical (assignment marks at risk):
+1. **Section B Collections** — 7 missing collections (LinkedList, HashSet, TreeSet, TreeMap, Queue, PriorityQueue, Deque) that are only in the comparison report but not actively used in business logic (~35 marks)
+2. **Section E Reports** — 6 stub reports that need real implementations (~15 marks)
+3. **Section E UML diagrams** — class/ER/layer diagrams (~10 marks within Section E)
+4. **Section F Rule 5** — Emergency patient PriorityQueue needs real code implementation (~5 marks)
+
+### Important:
+5. **Section D** — Verify @Transactional, pagination, sorting, filtering, cascade types are fully operational
+6. **Section A** — Add copy constructors to remaining entities (Patient, Doctor, Nurse, Appointment, etc.)
+7. **Section D** — Write Singleton pattern explanation docs
+
+### Low priority / already documented:
+8. **Section A Req 6** — Verify displayProfile / calculateCharges / generateReport exist in all relevant entities
