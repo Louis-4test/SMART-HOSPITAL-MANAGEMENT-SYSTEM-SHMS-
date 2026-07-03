@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -19,13 +20,22 @@ public class ReportServiceImpl implements ReportService {
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
     private final LaboratoryTestRepository laboratoryTestRepository;
+    private final DepartmentRepository departmentRepository;
+    private final AppointmentRepository appointmentRepository;
+    private final InvoiceRepository invoiceRepository;
 
     public ReportServiceImpl(PatientRepository patientRepository,
-                             DoctorRepository doctorRepository,
-                             LaboratoryTestRepository laboratoryTestRepository) {
+                              DoctorRepository doctorRepository,
+                              LaboratoryTestRepository laboratoryTestRepository,
+                              DepartmentRepository departmentRepository,
+                              AppointmentRepository appointmentRepository,
+                              InvoiceRepository invoiceRepository) {
         this.patientRepository = patientRepository;
         this.doctorRepository = doctorRepository;
         this.laboratoryTestRepository = laboratoryTestRepository;
+        this.departmentRepository = departmentRepository;
+        this.appointmentRepository = appointmentRepository;
+        this.invoiceRepository = invoiceRepository;
     }
 
     private static final Logger log = LoggerFactory.getLogger(ReportServiceImpl.class);
@@ -41,15 +51,27 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public Map<String, Long> getPatientsPerDepartment() {
         log.info("Entering getPatientsPerDepartment()");
-        Map<String, Long> result = Map.of();
-        log.debug("Exiting getPatientsPerDepartment: {}", result);
+        List<Department> departments = departmentRepository.findAll();
+        Map<String, Long> result = new TreeMap<>();
+        for (Department dept : departments) {
+            long count = dept.getDoctors().stream()
+                    .flatMap(d -> d.getAppointments().stream())
+                    .map(a -> a.getPatient().getId())
+                    .distinct()
+                    .count();
+            result.put(dept.getName(), count);
+        }
+        log.debug("Exiting getPatientsPerDepartment: {} departments", result.size());
         return result;
     }
 
     @Override
     public long getPatientsAdmittedToday() {
         log.info("Entering getPatientsAdmittedToday()");
-        long result = 0;
+        long result = patientRepository.findAll().stream()
+                .filter(p -> p.getCreatedAt() != null
+                        && p.getCreatedAt().toLocalDate().equals(java.time.LocalDate.now()))
+                .count();
         log.debug("Exiting getPatientsAdmittedToday: {}", result);
         return result;
     }
@@ -70,8 +92,10 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public Map<String, Long> getMostCommonDiseases() {
         log.info("Entering getMostCommonDiseases()");
-        Map<String, Long> result = Map.of();
-        log.debug("Exiting getMostCommonDiseases: {}", result);
+        Map<String, Long> result = appointmentRepository.findAll().stream()
+                .filter(a -> a.getReason() != null && !a.getReason().isBlank())
+                .collect(Collectors.groupingBy(Appointment::getReason, TreeMap::new, Collectors.counting()));
+        log.debug("Exiting getMostCommonDiseases: {} diseases", result.size());
         return result;
     }
 
@@ -90,24 +114,61 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public Map<String, Double> getRevenueByDepartment() {
         log.info("Entering getRevenueByDepartment()");
-        Map<String, Double> result = Map.of();
-        log.debug("Exiting getRevenueByDepartment: {}", result);
+        Map<String, Double> result = new TreeMap<>();
+        List<Invoice> invoices = invoiceRepository.findAll();
+        for (Invoice inv : invoices) {
+            if (inv.getAppointment() != null
+                    && inv.getAppointment().getDoctor() != null
+                    && inv.getAppointment().getDoctor().getDepartment() != null
+                    && inv.getTotalAmount() != null) {
+                String deptName = inv.getAppointment().getDoctor().getDepartment().getName();
+                result.merge(deptName, inv.getTotalAmount(), Double::sum);
+            }
+        }
+        log.debug("Exiting getRevenueByDepartment: {} departments", result.size());
         return result;
     }
 
     @Override
     public Map<String, Double> getMonthlyRevenue() {
         log.info("Entering getMonthlyRevenue()");
-        Map<String, Double> result = Map.of();
-        log.debug("Exiting getMonthlyRevenue: {}", result);
+        Map<String, Double> result = new TreeMap<>();
+        List<Invoice> invoices = invoiceRepository.findAll();
+        for (Invoice inv : invoices) {
+            if (inv.getIssueDate() != null && inv.getTotalAmount() != null) {
+                String monthKey = inv.getIssueDate().getMonth().toString()
+                        + " " + inv.getIssueDate().getYear();
+                result.merge(monthKey, inv.getTotalAmount(), Double::sum);
+            }
+        }
+        log.debug("Exiting getMonthlyRevenue: {} months", result.size());
         return result;
     }
 
     @Override
     public Map<String, Long> getPatientAgeDistribution() {
         log.info("Entering getPatientAgeDistribution()");
-        Map<String, Long> result = Map.of();
-        log.debug("Exiting getPatientAgeDistribution: {}", result);
+        Map<String, Long> result = new LinkedHashMap<>();
+        result.put("0-18", 0L);
+        result.put("19-30", 0L);
+        result.put("31-45", 0L);
+        result.put("46-60", 0L);
+        result.put("61-80", 0L);
+        result.put("80+", 0L);
+
+        java.time.LocalDate today = java.time.LocalDate.now();
+        for (Patient p : patientRepository.findAll()) {
+            if (p.getDateOfBirth() == null) continue;
+            int age = today.getYear() - p.getDateOfBirth().getYear();
+            if (today.getDayOfYear() < p.getDateOfBirth().getDayOfYear()) age--;
+            if (age <= 18) result.merge("0-18", 1L, Long::sum);
+            else if (age <= 30) result.merge("19-30", 1L, Long::sum);
+            else if (age <= 45) result.merge("31-45", 1L, Long::sum);
+            else if (age <= 60) result.merge("46-60", 1L, Long::sum);
+            else if (age <= 80) result.merge("61-80", 1L, Long::sum);
+            else result.merge("80+", 1L, Long::sum);
+        }
+        log.debug("Exiting getPatientAgeDistribution: {} buckets", result.size());
         return result;
     }
 

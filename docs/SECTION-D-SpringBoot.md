@@ -377,16 +377,41 @@ Swagger/OpenAPI configured via `OpenApiConfig`:
 
 ---
 
+## Singleton Pattern
+
+### Why Spring Beans are Singleton by Default
+In Spring, the default bean scope is **singleton** — only one instance per Spring IoC container is created. This is the default because:
+
+1. **Stateless services** — Most service beans (e.g., `PatientServiceImpl`, `DoctorServiceImpl`) hold no mutable state; they are thread-safe stateless singletons.
+2. **Performance** — No per-request instantiation overhead; the same bean instance is reused across the entire application.
+3. **Consistency** — Shared configuration beans, caches, and strategies behave predictably when there is exactly one instance.
+
+### Singleton Beans in this Application
+All `@Service`, `@Repository`, `@Component` beans are implicitly singleton scoped:
+- `HospitalFacade` — Single coordination point for admission/billing/discharge
+- `BillingContext` — Holds all `BillingStrategy` beans in a `ConcurrentHashMap`
+- `HospitalFactory` — Static factory methods (no instance needed)
+- `AuditConfig` — Single `AuditorAware` bean for all entities
+
+### When to Use Other Scopes
+- **Prototype** — When beans hold per-request state (not needed here)
+- **Request/Session** — For web-specific state (session-scoped user preferences)
+- **Application** — For application-wide lifecycle (servlet context)
+
 ## Testing
 
 ### Unit Tests (JUnit 5 + Mockito)
-- `PatientServiceTest` — 7 tests: create, find, search, delete
+- `PatientServiceTest` — 11 tests: create, find, search, update, delete
 - `AppointmentServiceTest` — 4 tests: creation with/without conflicts, cancel/undo
+- `BillingServiceTest` — 5 tests: invoice generation, payment processing
+- `LaboratoryTestServiceTest` — 5 tests: request, result update, status search
+- `ReportServiceTest` — 1 test: collection comparison table
 
 ### Integration Tests (MockMvc)
-- `PatientControllerTest` — 6 tests: CRUD with auth, 404 handling, unauthorized access
+- `PatientControllerTest` — 11 tests: CRUD with auth, validation, role-based access
+- `ReportControllerTest` — 2 tests: authorized/unauthorized report access
 
 ### Test Results
 ```
-Tests run: 18, Failures: 0, Errors: 0, Skipped: 0
+Tests run: 40, Failures: 0, Errors: 0, Skipped: 0
 ```

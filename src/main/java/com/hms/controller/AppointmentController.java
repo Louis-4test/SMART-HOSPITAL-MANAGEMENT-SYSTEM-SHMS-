@@ -98,6 +98,27 @@ public class AppointmentController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/filter")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR', 'NURSE', 'RECEPTIONIST')")
+    public ResponseEntity<List<AppointmentDTO>> filterAppointments(
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) Long doctorId) {
+        List<Appointment> results = appointmentService.findAll();
+        if (status != null) {
+            results = results.stream()
+                    .filter(a -> status.equalsIgnoreCase(a.getStatus()))
+                    .toList();
+        }
+        if (doctorId != null) {
+            results = results.stream()
+                    .filter(a -> a.getDoctor() != null && doctorId.equals(a.getDoctor().getId()))
+                    .toList();
+        }
+        return ResponseEntity.ok(results.stream()
+                .map(a -> modelMapper.map(a, AppointmentDTO.class))
+                .toList());
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteAppointment(@PathVariable Long id) {

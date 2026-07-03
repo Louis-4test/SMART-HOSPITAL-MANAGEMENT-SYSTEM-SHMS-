@@ -18,6 +18,8 @@ public class Patient extends Person {
 
     private String patientStatus;
 
+    private int severityLevel;
+
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "medical_record_id")
     private MedicalRecord medicalRecord;
@@ -57,6 +59,7 @@ public class Patient extends Person {
         this.bloodType = other.bloodType;
         this.nationalId = other.nationalId;
         this.patientStatus = other.patientStatus;
+        this.severityLevel = other.severityLevel;
     }
 
     public LocalDate getDateOfBirth() { return dateOfBirth; }
@@ -69,6 +72,8 @@ public class Patient extends Person {
     public void setNationalId(String nationalId) { this.nationalId = nationalId; }
     public String getPatientStatus() { return patientStatus; }
     public void setPatientStatus(String patientStatus) { this.patientStatus = patientStatus; }
+    public int getSeverityLevel() { return severityLevel; }
+    public void setSeverityLevel(int severityLevel) { this.severityLevel = severityLevel; }
     public MedicalRecord getMedicalRecord() { return medicalRecord; }
     public void setMedicalRecord(MedicalRecord medicalRecord) { this.medicalRecord = medicalRecord; }
     public EmergencyContact getEmergencyContact() { return emergencyContact; }
@@ -89,5 +94,13 @@ public class Patient extends Person {
 
     public double calculateCharges() {
         return 0;
+    }
+
+    @Override
+    public String generateReport() {
+        return "Patient Report: " + getFirstName() + " " + getLastName()
+                + " | Status: " + patientStatus
+                + " | DOB: " + dateOfBirth
+                + " | Gender: " + gender;
     }
 }

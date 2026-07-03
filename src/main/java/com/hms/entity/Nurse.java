@@ -38,4 +38,11 @@ public class Nurse extends Person {
     public double calculateCharges() {
         return 0;
     }
+
+    @Override
+    public String generateReport() {
+        return "Nurse Report: " + getFirstName() + " " + getLastName()
+                + " | Shift: " + shift
+                + " | Department: " + department;
+    }
 }

@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Set;
 
 public interface DoctorService {
     Doctor registerDoctor(Doctor doctor);
@@ -17,4 +18,6 @@ public interface DoctorService {
     Doctor update(Long id, Doctor doctor);
     void delete(Long id);
     List<Doctor> getBusiestDoctors();
+    Set<String> getAllLicenseNumbers();
+    boolean isLicenseNumberRegistered(String licenseNumber);
 }

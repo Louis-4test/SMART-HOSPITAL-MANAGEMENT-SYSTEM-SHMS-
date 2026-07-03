@@ -12,13 +12,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 @Service
 @Transactional
 public class PatientServiceImpl implements PatientService {
 
     private final PatientRepository patientRepository;
+    private final Queue<Patient> erWaitingQueue = new LinkedList<>();
+    private final Queue<Patient> emergencyTriageQueue = new PriorityQueue<>(
+            (a, b) -> Integer.compare(b.getSeverityLevel(), a.getSeverityLevel())
+    );
 
     public PatientServiceImpl(PatientRepository patientRepository) {
         this.patientRepository = patientRepository;
@@ -131,5 +138,46 @@ public class PatientServiceImpl implements PatientService {
         log.info("Entering delete({})", id);
         patientRepository.deleteById(id);
         log.debug("Exiting delete");
+    }
+
+    @Override
+    public void addToERQueue(Patient patient) {
+        log.info("Entering addToERQueue({})", patient.getId());
+        erWaitingQueue.add(patient);
+        log.debug("Exiting addToERQueue: queue size {}", erWaitingQueue.size());
+    }
+
+    @Override
+    public Patient processNextERPatient() {
+        log.info("Entering processNextERPatient()");
+        Patient patient = erWaitingQueue.poll();
+        log.debug("Exiting processNextERPatient: {}", patient);
+        return patient;
+    }
+
+    @Override
+    public Queue<Patient> getERQueue() {
+        return new LinkedList<>(erWaitingQueue);
+    }
+
+    @Override
+    public void addToEmergencyTriage(Patient patient, int severityLevel) {
+        log.info("Entering addToEmergencyTriage({}, severity={})", patient.getId(), severityLevel);
+        patient.setSeverityLevel(severityLevel);
+        emergencyTriageQueue.add(patient);
+        log.debug("Exiting addToEmergencyTriage: triage queue size {}", emergencyTriageQueue.size());
+    }
+
+    @Override
+    public Patient processNextEmergencyPatient() {
+        log.info("Entering processNextEmergencyPatient()");
+        Patient patient = emergencyTriageQueue.poll();
+        log.debug("Exiting processNextEmergencyPatient: {}", patient);
+        return patient;
+    }
+
+    @Override
+    public Queue<Patient> getEmergencyTriageQueue() {
+        return new PriorityQueue<>(emergencyTriageQueue);
     }
 }

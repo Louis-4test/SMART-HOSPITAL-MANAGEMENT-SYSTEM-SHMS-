@@ -1,0 +1,177 @@
+@startuml
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+package "Entities" {
+  abstract class Person {
+    - Long id
+    - String firstName
+    - String lastName
+    - String email
+    - String phone
+    - String address
+    - LocalDateTime createdAt
+    - LocalDateTime updatedAt
+    - String createdBy
+    - boolean deleted
+    + displayProfile()
+    + String generateReport()
+  }
+
+  class Patient {
+    - LocalDate dateOfBirth
+    - String gender
+    - String bloodType
+    - String nationalId
+    - String patientStatus
+    - int severityLevel
+    + displayProfile()
+    + double calculateCharges()
+    + String generateReport()
+  }
+
+  class Doctor {
+    - String licenseNumber
+    - String specialization
+    - Integer yearsOfExperience
+    + displayProfile()
+    + double calculateCharges()
+    + String generateReport()
+  }
+
+  class Nurse {
+    - String licenseNumber
+    - String shift
+    - String department
+    + displayProfile()
+    + double calculateCharges()
+    + String generateReport()
+  }
+
+  class Receptionist {
+    - String employeeCode
+    - String shift
+    + displayProfile()
+    + String generateReport()
+  }
+
+  class Department {
+    - Long id
+    - String name
+    - String description
+    - String location
+    - LocalDateTime createdAt
+    - LocalDateTime updatedAt
+    - String createdBy
+  }
+
+  class Appointment {
+    - Long id
+    - LocalDateTime appointmentDate
+    - String status
+    - String reason
+    - String notes
+    - LocalDateTime createdAt
+    - LocalDateTime updatedAt
+    - String createdBy
+  }
+
+  class MedicalRecord {
+    - Long id
+    - String bloodType
+    - String allergies
+    - String chronicConditions
+    - String pastSurgeries
+    - String familyHistory
+    - String insuranceInfo
+  }
+
+  class EmergencyContact {
+    - Long id
+    - String fullName
+    - String relationship
+    - String phone
+    - String alternatePhone
+  }
+
+  class Address {
+    - Long id
+    - String street
+    - String city
+    - String state
+    - String zipCode
+    - String country
+  }
+
+  class Prescription {
+    - Long id
+    - String medicationName
+    - String dosage
+    - String frequency
+    - String duration
+    - LocalDate issueDate
+  }
+
+  class LaboratoryTest {
+    - Long id
+    - String testName
+    - LocalDateTime testDate
+    - String result
+    - String status
+    - String requestedByDoctor
+  }
+
+  class Invoice {
+    - Long id
+    - String invoiceNumber
+    - Double amount
+    - Double tax
+    - Double totalAmount
+    - LocalDate issueDate
+    - LocalDate dueDate
+    - String status
+  }
+
+  class User {
+    - Long id
+    - String username
+    - String password
+    - String role
+    - boolean enabled
+  }
+
+  class AuditLog {
+    - Long id
+    - String action
+    - String entityType
+    - Long entityId
+    - String details
+    - String performedBy
+    - LocalDateTime timestamp
+  }
+}
+
+' Inheritance
+Person <|-- Patient
+Person <|-- Doctor
+Person <|-- Nurse
+Person <|-- Receptionist
+
+' Composition (Patient owns these)
+Patient *-- MedicalRecord : "cascade ALL"
+Patient *-- EmergencyContact : "cascade ALL"
+Patient *-- Address : "cascade ALL"
+
+' Aggregation (Department contains Doctors)
+Department o-- Doctor : "has many"
+
+' Association
+Patient "1" -- "many" Appointment : "books"
+Doctor "1" -- "many" Appointment : "conducts"
+Appointment "1" -- "1" Invoice : "generates"
+Patient "1" -- "many" Prescription : "receives"
+Patient "many" -- "many" LaboratoryTest : "undergoes"
+Doctor "many" -- "1" Department : "belongs to"
+
+@enduml

@@ -1,0 +1,110 @@
+@startuml
+!theme plain
+skinparam packageStyle rectangle
+
+title "Design Patterns"
+
+package "Factory Pattern" {
+  class HospitalFactory {
+    + createPatient() : Patient
+    + createDoctor() : Doctor
+    + createNurse() : Nurse
+    + createDepartment() : Department
+    + createAppointment() : Appointment
+  }
+}
+
+package "Builder Pattern" {
+  class PatientBuilder {
+    + withFirstName(String) : PatientBuilder
+    + withLastName(String) : PatientBuilder
+    + withEmail(String) : PatientBuilder
+    + withPhone(String) : PatientBuilder
+    + build() : Patient
+  }
+  class DoctorBuilder {
+    + withFirstName(String) : DoctorBuilder
+    + withLastName(String) : DoctorBuilder
+    + withLicenseNumber(String) : DoctorBuilder
+    + withSpecialization(String) : DoctorBuilder
+    + build() : Doctor
+  }
+}
+
+package "Strategy Pattern" {
+  interface BillingStrategy {
+    + calculateAmount(double) : double
+    + getBillingType() : String
+  }
+  class GeneralConsultationBilling
+  class SurgeryBilling
+  class LaboratoryBilling
+  class PharmacyBilling
+  class BillingContext {
+    - strategies : Map<String, BillingStrategy>
+    + calculate(String, double) : double
+  }
+  BillingStrategy <|.. GeneralConsultationBilling
+  BillingStrategy <|.. SurgeryBilling
+  BillingStrategy <|.. LaboratoryBilling
+  BillingStrategy <|.. PharmacyBilling
+  BillingContext o--> BillingStrategy
+}
+
+package "Observer Pattern" {
+  class PatientAdmittedEvent {
+    - patient : Patient
+  }
+  interface EventListener {
+    + onPatientAdmitted(PatientAdmittedEvent)
+  }
+  class AuditLogger
+  class BillingNotifier
+  class DoctorNotifier
+  class HospitalStatisticsUpdater
+  EventListener <|.. AuditLogger
+  EventListener <|.. BillingNotifier
+  EventListener <|.. DoctorNotifier
+  EventListener <|.. HospitalStatisticsUpdater
+  PatientAdmittedEvent --> EventListener : notifies
+}
+
+package "Adapter Pattern" {
+  interface PaymentGateway {
+    + processPayment(double) : boolean
+  }
+  class ExternalPaymentService {
+    + sendPayment(double) : String
+  }
+  class ExternalPaymentGatewayAdapter {
+    + processPayment(double) : boolean
+  }
+  PaymentGateway <|.. ExternalPaymentGatewayAdapter
+  ExternalPaymentGatewayAdapter --> ExternalPaymentService : delegates
+}
+
+package "Facade Pattern" {
+  class HospitalFacade {
+    + admitPatient(Patient, Long) : Patient
+    + requestLabTest(Long, Long, LaboratoryTest) : Appointment
+    + generateBill(Long) : Invoice
+    + dischargePatient(Long)
+  }
+}
+
+package "Template Method Pattern" {
+  abstract class AdmissionWorkflow {
+    + processAdmission(Patient)
+    # registerPatient(Patient)
+    # assignRoom()
+    # assignDoctor()
+    # createMedicalRecord()
+    # notifyDepartments()
+  }
+  class EmergencyAdmission
+  class OutpatientAdmission
+  AdmissionWorkflow <|-- EmergencyAdmission
+  AdmissionWorkflow <|-- OutpatientAdmission
+}
+
+@enduml
