@@ -10,9 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -20,22 +18,13 @@ public class ReportServiceImpl implements ReportService {
 
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
-    private final AppointmentRepository appointmentRepository;
-    private final InvoiceRepository invoiceRepository;
-    private final DepartmentRepository departmentRepository;
     private final LaboratoryTestRepository laboratoryTestRepository;
 
     public ReportServiceImpl(PatientRepository patientRepository,
                              DoctorRepository doctorRepository,
-                             AppointmentRepository appointmentRepository,
-                             InvoiceRepository invoiceRepository,
-                             DepartmentRepository departmentRepository,
                              LaboratoryTestRepository laboratoryTestRepository) {
         this.patientRepository = patientRepository;
         this.doctorRepository = doctorRepository;
-        this.appointmentRepository = appointmentRepository;
-        this.invoiceRepository = invoiceRepository;
-        this.departmentRepository = departmentRepository;
         this.laboratoryTestRepository = laboratoryTestRepository;
     }
 

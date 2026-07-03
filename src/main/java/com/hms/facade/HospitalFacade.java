@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 public class HospitalFacade {
 
     private final PatientService patientService;
-    private final DoctorService doctorService;
     private final AppointmentService appointmentService;
     private final BillingService billingService;
     private final LaboratoryTestService laboratoryTestService;
@@ -18,14 +17,12 @@ public class HospitalFacade {
     private final ApplicationEventPublisher eventPublisher;
 
     public HospitalFacade(PatientService patientService,
-                          DoctorService doctorService,
                           AppointmentService appointmentService,
                           BillingService billingService,
                           LaboratoryTestService laboratoryTestService,
                           AuditService auditService,
                           ApplicationEventPublisher eventPublisher) {
         this.patientService = patientService;
-        this.doctorService = doctorService;
         this.appointmentService = appointmentService;
         this.billingService = billingService;
         this.laboratoryTestService = laboratoryTestService;

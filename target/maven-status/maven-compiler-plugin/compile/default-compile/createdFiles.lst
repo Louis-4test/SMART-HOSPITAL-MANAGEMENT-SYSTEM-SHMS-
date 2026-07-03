@@ -1,6 +1,7 @@
 com/hms/config/AppConfig.class
 com/hms/service/BillingService.class
 com/hms/repository/DepartmentRepository.class
+com/hms/service/impl/AuditServiceImpl.class
 com/hms/exception/PatientNotFoundException.class
 com/hms/exception/GlobalExceptionHandler.class
 com/hms/strategy/BillingContext.class
@@ -16,6 +17,7 @@ com/hms/entity/Prescription.class
 com/hms/service/impl/PatientServiceImpl.class
 com/hms/entity/Appointment.class
 com/hms/service/impl/AppointmentServiceImpl.class
+com/hms/repository/UserRepository.class
 com/hms/adapter/PaymentGateway.class
 com/hms/config/AuditConfig.class
 com/hms/dto/DoctorDTO.class
@@ -24,6 +26,8 @@ com/hms/controller/AppointmentController.class
 com/hms/repository/AddressRepository.class
 com/hms/service/impl/PrescriptionServiceImpl.class
 com/hms/repository/MedicalRecordRepository.class
+com/hms/dto/CollectionComparisonDTO.class
+com/hms/config/CustomUserDetailsService.class
 com/hms/service/impl/DepartmentServiceImpl.class
 com/hms/observer/DoctorNotifier.class
 com/hms/dto/EmergencyContactDTO.class
@@ -43,8 +47,10 @@ com/hms/exception/PaymentFailedException.class
 com/hms/strategy/GeneralConsultationBilling.class
 com/hms/strategy/LaboratoryBilling.class
 com/hms/dto/AddressDTO.class
+com/hms/service/impl/ReceptionistServiceImpl.class
 com/hms/exception/DoctorUnavailableException.class
 com/hms/controller/PrescriptionController.class
+com/hms/service/AuditService.class
 com/hms/dto/NurseDTO.class
 com/hms/config/SecurityConfig.class
 com/hms/service/impl/LaboratoryTestServiceImpl.class
@@ -62,15 +68,19 @@ com/hms/service/impl/ReportServiceImpl.class
 com/hms/dto/DepartmentDTO.class
 com/hms/adapter/ExternalPaymentGatewayAdapter.class
 com/hms/entity/Doctor.class
+com/hms/repository/AuditLogRepository.class
 com/hms/dto/PatientDTO.class
+com/hms/entity/AuditLog.class
 com/hms/repository/ReceptionistRepository.class
 com/hms/HmsApplication.class
+com/hms/service/ReceptionistService.class
 com/hms/entity/Nurse.class
 com/hms/dto/ReceptionistDTO.class
 com/hms/controller/BillingController.class
 com/hms/entity/EmergencyContact.class
 com/hms/controller/PatientController.class
 com/hms/service/impl/PersonServiceImpl.class
+com/hms/controller/ReceptionistController.class
 com/hms/service/LaboratoryTestService.class
 com/hms/repository/PatientRepository.class
 com/hms/controller/NurseController.class
@@ -92,7 +102,9 @@ com/hms/service/AppointmentService.class
 com/hms/template/OutpatientAdmission.class
 com/hms/factory/HospitalFactory.class
 com/hms/service/impl/DoctorServiceImpl.class
+com/hms/config/DataInitializer.class
 com/hms/entity/Address.class
 com/hms/dto/AppointmentDTO.class
 com/hms/facade/HospitalFacade.class
+com/hms/entity/User.class
 com/hms/observer/BillingNotifier.class

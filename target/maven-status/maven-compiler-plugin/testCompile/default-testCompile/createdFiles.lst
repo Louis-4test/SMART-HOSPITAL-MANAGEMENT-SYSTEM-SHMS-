@@ -1,4 +1,8 @@
+com/hms/service/BillingServiceTest.class
 com/hms/controller/PatientControllerTest.class
+com/hms/service/ReportServiceTest.class
+com/hms/controller/ReportControllerTest.class
 com/hms/service/AppointmentServiceTest.class
+com/hms/service/LaboratoryTestServiceTest.class
 com/hms/HmsApplicationTests.class
 com/hms/service/PatientServiceTest.class
