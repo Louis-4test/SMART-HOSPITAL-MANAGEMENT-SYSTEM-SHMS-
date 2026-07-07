@@ -41,6 +41,7 @@ com/hms/service/DoctorService.class
 com/hms/strategy/PharmacyBilling.class
 com/hms/strategy/BillingStrategy.class
 com/hms/exception/DuplicatePatientException.class
+com/hms/config/OpenApiConfig$1.class
 com/hms/adapter/ExternalPaymentService.class
 com/hms/service/NurseService.class
 com/hms/exception/PaymentFailedException.class
@@ -62,6 +63,7 @@ com/hms/entity/MedicalRecord.class
 com/hms/controller/DoctorController.class
 com/hms/repository/AppointmentRepository.class
 com/hms/repository/InvoiceRepository.class
+com/hms/service/impl/NavigationServiceImpl.class
 com/hms/repository/EmergencyContactRepository.class
 com/hms/controller/LaboratoryTestController.class
 com/hms/service/impl/ReportServiceImpl.class
@@ -72,6 +74,7 @@ com/hms/repository/AuditLogRepository.class
 com/hms/dto/PatientDTO.class
 com/hms/entity/AuditLog.class
 com/hms/repository/ReceptionistRepository.class
+com/hms/controller/NavigationController.class
 com/hms/HmsApplication.class
 com/hms/service/ReceptionistService.class
 com/hms/entity/Nurse.class
@@ -79,6 +82,7 @@ com/hms/dto/ReceptionistDTO.class
 com/hms/controller/BillingController.class
 com/hms/entity/EmergencyContact.class
 com/hms/controller/PatientController.class
+com/hms/service/NavigationService.class
 com/hms/service/impl/PersonServiceImpl.class
 com/hms/controller/ReceptionistController.class
 com/hms/service/LaboratoryTestService.class

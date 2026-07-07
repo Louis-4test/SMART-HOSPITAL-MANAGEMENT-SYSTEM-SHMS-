@@ -32,15 +32,15 @@ class PatientServiceTest {
     @Test
     void registerPatient_ShouldSaveAndReturn() {
         Patient patient = new Patient();
-        patient.setFirstName("John");
-        patient.setEmail("john@test.com");
+        patient.setFirstName("Kanjo");
+        patient.setEmail("kanjo@test.com");
 
         when(patientRepository.save(any(Patient.class))).thenReturn(patient);
 
         Patient result = patientService.registerPatient(patient);
 
         assertNotNull(result);
-        assertEquals("John", result.getFirstName());
+        assertEquals("Kanjo", result.getFirstName());
         verify(patientRepository).save(patient);
     }
 
@@ -80,11 +80,11 @@ class PatientServiceTest {
     @Test
     void searchPatient_WithName_ShouldReturnMatching() {
         Patient patient = new Patient();
-        patient.setFirstName("John");
-        when(patientRepository.findByFirstNameContainingIgnoreCase("John")).thenReturn(List.of(patient));
-        when(patientRepository.findByLastNameContainingIgnoreCase("John")).thenReturn(List.of());
+        patient.setFirstName("Kanjo");
+        when(patientRepository.findByFirstNameContainingIgnoreCase("Kanjo")).thenReturn(List.of(patient));
+        when(patientRepository.findByLastNameContainingIgnoreCase("Kanjo")).thenReturn(List.of());
 
-        List<Patient> results = patientService.searchPatient("John");
+        List<Patient> results = patientService.searchPatient("Kanjo");
 
         assertEquals(1, results.size());
     }
@@ -92,16 +92,16 @@ class PatientServiceTest {
     @Test
     void searchPatient_WithNameAndPhone_ShouldReturnOnlyPhoneMatches() {
         Patient matching = new Patient();
-        matching.setFirstName("John");
+        matching.setFirstName("Kanjo");
         matching.setPhone("+1234567890");
 
         Patient other = new Patient();
-        other.setFirstName("John");
+        other.setFirstName("Kanjo");
         other.setPhone("+9999999999");
 
-        when(patientRepository.searchByName("John")).thenReturn(List.of(matching, other));
+        when(patientRepository.searchByName("Kanjo")).thenReturn(List.of(matching, other));
 
-        List<Patient> results = patientService.searchPatient("John", "+1234567890");
+        List<Patient> results = patientService.searchPatient("Kanjo", "+1234567890");
 
         assertEquals(1, results.size());
         assertSame(matching, results.get(0));
@@ -110,13 +110,13 @@ class PatientServiceTest {
     @Test
     void findByEmail_WhenExists_ShouldReturnPatient() {
         Patient patient = new Patient();
-        patient.setEmail("john@test.com");
-        when(patientRepository.findByEmail("john@test.com")).thenReturn(Optional.of(patient));
+        patient.setEmail("kanjo@test.com");
+        when(patientRepository.findByEmail("kanjo@test.com")).thenReturn(Optional.of(patient));
 
-        Patient result = patientService.findByEmail("john@test.com");
+        Patient result = patientService.findByEmail("kanjo@test.com");
 
         assertNotNull(result);
-        assertEquals("john@test.com", result.getEmail());
+        assertEquals("kanjo@test.com", result.getEmail());
     }
 
     @Test

@@ -3,11 +3,14 @@ package com.hms.service.impl;
 import com.hms.entity.Department;
 import com.hms.repository.DepartmentRepository;
 import com.hms.service.DepartmentService;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -56,20 +59,21 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public Department update(Long id, Department department) {
-        log.info("Entering update({}, {})", id, department);
-        Department existing = departmentRepository.findById(id).orElse(null);
-        if (existing == null) {
-            log.debug("Exiting update: department not found");
-            return null;
-        }
-        existing.setName(department.getName());
-        existing.setDescription(department.getDescription());
-        existing.setLocation(department.getLocation());
-        Department result = departmentRepository.save(existing);
-        log.debug("Exiting update: {}", result);
-        return result;
-    }
+public Department update(Long id, Department department) {
+    log.info("Entering update({}, {})", id, department);
+    
+    // Use .orElseThrow() to halt execution cleanly if the ID isn't located
+    Department existing = departmentRepository.findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Department not found"));
+        
+    existing.setName(department.getName());
+    existing.setDescription(department.getDescription());
+    existing.setLocation(department.getLocation());
+    
+    Department result = departmentRepository.save(existing);
+    log.debug("Exiting update: {}", result);
+    return result;
+}
 
     @Override
     public void delete(Long id) {

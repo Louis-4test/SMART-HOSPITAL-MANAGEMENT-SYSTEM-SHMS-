@@ -8,6 +8,8 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class OpenApiConfig {
@@ -25,5 +27,15 @@ public class OpenApiConfig {
                 .schemaRequirement("basicAuth", new SecurityScheme()
                         .type(SecurityScheme.Type.HTTP)
                         .scheme("basic"));
+    }
+
+    @Bean
+    public WebMvcConfigurer swaggerRedirect() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addViewControllers(ViewControllerRegistry registry) {
+                registry.addRedirectViewController("/swagger-ui/", "/swagger-ui/index.html");
+            }
+        };
     }
 }

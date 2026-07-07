@@ -45,16 +45,17 @@ class PatientControllerTest {
     @WithMockUser(roles = "RECEPTIONIST")
     void createPatient_ShouldReturn201() throws Exception {
         PatientDTO dto = new PatientDTO();
-        dto.setFirstName("John");
-        dto.setLastName("Doe");
-        dto.setEmail("john@test.com");
+        dto.setFirstName("Kanjo");
+        dto.setLastName("Ndi");
+        dto.setEmail("kanjo@test.com");
         dto.setPhone("+1234567890");
         dto.setGender("Male");
         dto.setNationalId("NAT-12345");
 
         Patient patient = new Patient();
         patient.setId(1L);
-        patient.setFirstName("John");
+        patient.setFirstName("Kanjo");
+        patient.setLastName("Ndi");
 
         when(modelMapper.map(any(PatientDTO.class), eq(Patient.class))).thenReturn(patient);
         when(patientService.registerPatient(any(Patient.class))).thenReturn(patient);
@@ -120,7 +121,7 @@ class PatientControllerTest {
     @WithMockUser(roles = "RECEPTIONIST")
     void createPatient_WithInvalidPayload_ShouldReturn400() throws Exception {
         PatientDTO dto = new PatientDTO();
-        dto.setFirstName("J");
+        dto.setFirstName("K");
         dto.setLastName("");
         dto.setEmail("not-an-email");
         dto.setPhone("123");
@@ -168,9 +169,9 @@ class PatientControllerTest {
     void partialUpdate_ShouldOnlyApplyProvidedFields() throws Exception {
         Patient existing = new Patient();
         existing.setId(1L);
-        existing.setFirstName("John");
-        existing.setLastName("Doe");
-        existing.setEmail("john@test.com");
+        existing.setFirstName("Kanjo");
+        existing.setLastName("Ndi");
+        existing.setEmail("kanjo@test.com");
 
         PatientDTO patch = new PatientDTO();
         patch.setPhone("+1234567890");
@@ -193,22 +194,22 @@ class PatientControllerTest {
     @WithMockUser(roles = "NURSE")
     void searchPatients_ByEmail_ShouldReturnMatchingPatient() throws Exception {
         Patient patient = new Patient();
-        patient.setEmail("john@test.com");
+        patient.setEmail("kanjo@test.com");
 
-        when(patientService.findByEmail("john@test.com")).thenReturn(patient);
+        when(patientService.findByEmail("kanjo@test.com")).thenReturn(patient);
         when(modelMapper.map(patient, PatientDTO.class)).thenReturn(validPatientDto());
 
         mockMvc.perform(get("/api/v1/patients/search")
-                        .param("email", "john@test.com"))
+                        .param("email", "kanjo@test.com"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].email").value("john@test.com"));
+                .andExpect(jsonPath("$[0].email").value("kanjo@test.com"));
     }
 
     private PatientDTO validPatientDto() {
         PatientDTO dto = new PatientDTO();
-        dto.setFirstName("John");
-        dto.setLastName("Doe");
-        dto.setEmail("john@test.com");
+        dto.setFirstName("Kanjo");
+        dto.setLastName("Ndi");
+        dto.setEmail("kanjo@test.com");
         dto.setPhone("+1234567890");
         dto.setGender("Male");
         dto.setNationalId("NAT-12345");

@@ -113,3 +113,19 @@
 ---
 
 **STATUS: ALL SECTIONS COMPLETE** — No remaining work. All 40 tests pass.
+ 
+To test the entire project.
+
+mvn compile          # check compilation
+mvn test             # run all 40 tests
+mvn spring-boot:run  # start the application (then visit )http://localhost:8080/swagger-ui/
+
+T
+
+
+
+
+
+
+
+
